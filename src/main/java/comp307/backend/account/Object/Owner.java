@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class Owner extends User{
     //TODO use better data structure
     private ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
-    public Owner(String firstName, String lastName, String email, String password) {
-        super(firstName, lastName, email, password);
+    public Owner(String email, String password) {
+        super(email, password);
     }
 
     @Override
@@ -19,12 +19,21 @@ public class Owner extends User{
     public void createBookingSlot(int beginHour, int beginMinute, int endHour, int endMinute) {
         bookingSlots.add(new BookingSlot(beginHour, beginMinute, endHour, endMinute));
     }
+    public boolean hasAvailableSlots() {
+        for (BookingSlot bookingSlot : bookingSlots) {
+            if (bookingSlot.isActivated() && bookingSlot.getBooking() == null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public ArrayList<BookingSlot> getBookingSlots(User caller) {
-        //TODO improve logic,
         ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
+
         for (BookingSlot bookingSlot : this.bookingSlots) {
-            if (caller == this || bookingSlot.isActivated())
+            if (caller == this || bookingSlot.isAvailable())
                 bookingSlots.add(bookingSlot);
         }
 
@@ -39,4 +48,8 @@ public class Owner extends User{
     // TODO Owner can delete the booking slot
 
     // TODO Owner can send an email to the booked person
+
+    // TODO Owner can view all slots and who booked a slot
+
+
 }

@@ -4,48 +4,80 @@ import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AccountHelper;
+import comp307.backend.booking.Object.Booking;
+import comp307.backend.booking.Object.BookingSlot;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    public ArrayList<Owner> getAllOwners() {
-        // TODO use better data structure
-        // TODO impl
+    public ArrayList<Owner> getFreeSlotOwners() {
         ArrayList<Owner> owners = new ArrayList<>();
+
         for (User user : userRepository.findAll()) {
             if (user.isOwner()) {
-                owners.add((Owner) user);
+                Owner owner = (Owner) user;
+                if (owner.hasAvailableSlots()) {
+                    owners.add((Owner) user);
+                }
             }
         }
+
         return owners;
     }
 
-    public void register(String firstName, String lastName, String email, String password) {
-        if (!AccountHelper.isRegistered(email)) {
+    public User register(String email, String password) {
+        if (!AccountHelper.isRegistered(userRepository, email)) {
             User user;
+
             if(AccountHelper.isOwner(email)) {
-                user = new Owner(firstName, lastName, email, password);
+                user = new Owner(email, password);
             } else {
-                user = new User(firstName, lastName, email, password);
+                user = new User(email, password);
             }
-            // TODO return success msg
+
             userRepository.save(user);
-        } else {
-            // TODO return error msg
+            return user;
         }
+
+        return null;
     }
 
-    private void login(String email, String password) {
-        if (AccountHelper.isRegistered(email)) {
-            // TODO find email, then compare password
-        } else {
-            // TODO return error msg
+    public User login(String email, String password) {
+        if (AccountHelper.isRegistered(userRepository, email)) {
+            Optional<User> userField = userRepository.findById(email);
+
+            // user is registered
+            if (userField.isPresent()) {
+                User user = userField.get();
+                // password is correct
+                if (user.getPassword().equals(password)) {
+                    return user;
+                }
+            }
         }
+
+        return null;
+    }
+
+    public ArrayList<BookingSlot> getSlots(String userEmail, String targetEmail) {
+        ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
+        Optional<User> user = userRepository.findById(userEmail);
+        Optional<User> target = userRepository.findById(targetEmail);
+
+        if (user.isPresent() && target.isPresent()) {
+            User caller = user.get();
+            Owner owner = (Owner) target.get();
+
+            bookingSlots = owner.getBookingSlots(caller);
+        }
+
+        return bookingSlots;
     }
 }

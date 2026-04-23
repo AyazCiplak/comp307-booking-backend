@@ -12,9 +12,11 @@ public class User {
     @Id
     private String email;
     private String password;
-    public User(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String email, String password) {
+        String nameSection = email.split("@")[0];
+
+        this.firstName = nameSection.split("\\.")[0];
+        this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
         this.password = password;
     }
@@ -27,10 +29,12 @@ public class User {
         return lastName;
     }
 
+    // TODO should be private security wise, narrow down API for access
     public String getEmail() {
         return email;
     }
 
+    // TODO should be private security wise, narrow down API for access
     public String getPassword() {
         return password;
     }

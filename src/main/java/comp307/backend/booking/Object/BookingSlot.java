@@ -7,9 +7,12 @@ import comp307.backend.booking.Object.Booking;
 public class BookingSlot {
     private TimeInterval timeInterval;
     private boolean activated = false;
+    private Booking booking;
+
     public BookingSlot(int beginHour, int beginMinute, int endHour, int endMinute) {
         this.timeInterval = new TimeInterval(beginHour, beginMinute, endHour, endMinute);
     }
+
     public void activate() {
         activated = true;
     }
@@ -19,7 +22,7 @@ public class BookingSlot {
     public boolean isActivated() {
         return activated;
     }
-    private Booking booking;
+
     private void book(User reservee) {
         if (booking == null) {
             booking = new Booking(reservee);
@@ -30,6 +33,10 @@ public class BookingSlot {
     public Booking getBooking() {
         return booking;
     }
+    public boolean isAvailable() {
+        return activated && booking == null; // empty booking = available
+    }
+
     // TODO Owner can view all slots and who booked a slot.
     private class TimeInterval {
         private Time beginTime;

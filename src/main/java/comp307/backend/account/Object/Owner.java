@@ -1,11 +1,12 @@
 package comp307.backend.account.Object;
 
 import comp307.backend.booking.Object.BookingSlot;
+import comp307.backend.booking.Object.TimeInterval;
 
 import java.util.ArrayList;
 
 public class Owner extends User{
-    //TODO use better data structure
+    //TODO should be retrieved in booking repository
     private ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
     public Owner(String email, String password) {
         super(email, password);
@@ -16,12 +17,14 @@ public class Owner extends User{
         return true;
     }
 
-    public void createBookingSlot(int beginHour, int beginMinute, int endHour, int endMinute) {
-        bookingSlots.add(new BookingSlot(beginHour, beginMinute, endHour, endMinute));
+    public BookingSlot createBookingSlot(int beginHour, int beginMinute, int endHour, int endMinute) {
+        BookingSlot bookingSlot = new BookingSlot(this, beginHour, beginMinute, endHour, endMinute);
+        bookingSlots.add(bookingSlot);
+        return bookingSlot;
     }
     public boolean hasAvailableSlots() {
         for (BookingSlot bookingSlot : bookingSlots) {
-            if (bookingSlot.isActivated() && bookingSlot.getBooking() == null) {
+            if (bookingSlot.isActivated() && bookingSlot.getReservee() == null) {
                 return true;
             }
         }
@@ -39,4 +42,7 @@ public class Owner extends User{
 
         return bookingSlots;
     }
+
+
+
 }

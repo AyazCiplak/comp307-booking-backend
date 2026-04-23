@@ -8,13 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-
+import java.util.List;
+// TODO handle failures to process from calls
 @RestController
 @RequestMapping("api/account")
 public class AccountController {
-    private final UserService service;
+    private final AccountService service;
     public AccountController(UserRepository userRepository) {
-        this.service = new UserService(userRepository);
+        this.service = new AccountService(userRepository);
     }
 
     @PostMapping("/register")
@@ -38,17 +39,31 @@ public class AccountController {
     }
 
     @PostMapping("/getFreeSlotOwners")
-    public ResponseEntity<ArrayList<Owner>> getFreeSlotOwners() {
+    public ResponseEntity<List<Owner>> getFreeSlotOwners() {
         return ResponseEntity.ok(service.getFreeSlotOwners());
     }
 
     // callerEmail = targetEmail -> owner viewing their own slots
     // otherwise is someone else viewing an owner's available slots (activated and free)
     @PostMapping("/getSlots")
-    public ResponseEntity<ArrayList<BookingSlot>> getSlots(@RequestBody String callerEmail, @RequestBody String targetEmail) {
+    public ResponseEntity<List<BookingSlot>> getSlots(@RequestBody String callerEmail, @RequestBody String targetEmail) {
         return ResponseEntity.ok(service.getSlots(callerEmail, targetEmail));
     }
-    // TODO Users can see all the slots they have booked
+
+    @PostMapping("/createSlot")
+    public ResponseEntity<BookingSlot> createSlot(@RequestBody String ownerEmail, @RequestBody int beginHour, @RequestBody int beginMinute, @RequestBody int endHour, @RequestBody int endMinute) {
+        return ResponseEntity.ok(service.createSlot(ownerEmail, beginHour, beginMinute, endHour, endMinute));
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<String> activate(@RequestBody String ownerEmail, @RequestBody int beginHour, @RequestBody int beginMinute, @RequestBody int endHour, int endMinute) {
+        return ResponseEntity.ok(service.setSlotState(ownerEmail, beginHour, beginMinute, endHour, endMinute));
+    }
+
+    @PostMapping("/listBooked")
+    public ResponseEntity<List<BookingSlot>> listBooked(@RequestBody String email) {
+        return ResponseEntity.ok(service.listBooked(email));
+    }
 
     // TODO Users can message the owner of the booking slot
 

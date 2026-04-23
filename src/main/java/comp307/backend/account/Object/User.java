@@ -1,5 +1,6 @@
 package comp307.backend.account.Object;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -7,10 +8,13 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Users")
 public class User {
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
     @Id
     private String email;
+    @Column(name = "password")
     private String password;
     public User(String email, String password) {
         String nameSection = email.split("@")[0];
@@ -39,6 +43,15 @@ public class User {
         return password;
     }
     public boolean isOwner() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object newUser) {
+        if (newUser instanceof User) {
+            return ((User) newUser).email.equals(this.email);
+        }
+
         return false;
     }
 }

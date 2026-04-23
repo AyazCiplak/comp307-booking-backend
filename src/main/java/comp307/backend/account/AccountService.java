@@ -3,10 +3,9 @@ package comp307.backend.account;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
-import comp307.backend.booking.BookingService;
-import comp307.backend.booking.Object.BookingPK;
-import comp307.backend.booking.Object.BookingSlot;
-import comp307.backend.booking.Object.TimeInterval;
+import comp307.backend.booking.Entity.BookingSlot;
+import comp307.backend.booking.Service.BookingServiceold;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -99,7 +98,7 @@ public class AccountService {
         Owner owner = getOwner(userRepository, ownerEmail);
         if (owner == null) return null;
         if (owner.getBookingSlots(owner).contains(new BookingSlot(owner, beginHour, beginMinute, endHour, endMinute))) {
-            Optional<BookingSlot> queryResult = BookingService.bookingRepository.findById(new BookingPK(owner, new TimeInterval(beginHour, beginMinute, endHour, endMinute)));
+            Optional<BookingSlot> queryResult = BookingServiceold.bookingRepository.findById(new BookingPK(owner, new TimeInterval(beginHour, beginMinute, endHour, endMinute)));
             if (queryResult.isPresent()) {
                 BookingSlot bookingSlot = queryResult.get();
                 bookingSlot.activate();
@@ -110,7 +109,7 @@ public class AccountService {
     public List<BookingSlot> listBooked(String email) {
         User user = getUser(userRepository, email);
         if (user == null) return null;
-        return BookingService.bookingRepository.findByReservee(user);
+        return BookingServiceold.bookingRepository.findByReservee(user);
     }
 
     public void message(String senderEmail, String receiverEmail, String message) {

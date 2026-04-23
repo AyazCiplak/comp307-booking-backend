@@ -1,10 +1,9 @@
-package comp307.backend.booking;
+package comp307.backend.booking.Controller;
 
-import comp307.backend.account.Object.Owner;
-import comp307.backend.account.Object.User;
-import comp307.backend.booking.Object.BookingRepository;
-import comp307.backend.booking.Object.BookingSlot;
-import comp307.backend.booking.Object.TimeInterval;
+import comp307.backend.booking.Entity.BookingSlot;
+import comp307.backend.booking.Repository.BookingSlotRepository;
+import comp307.backend.booking.Service.BookingServiceold;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
-    private final BookingService service;
-    public BookingController(BookingRepository bookingRepository) {
-        this.service = new BookingService(bookingRepository);
+    private final BookingServiceold service;
+    public BookingController(BookingSlotRepository bookingRepository) {
+        this.service = new BookingServiceold(bookingRepository);
     }
 
     @PostMapping("/book")

@@ -1,25 +1,24 @@
-package comp307.backend.booking;
+package comp307.backend.booking.Service;
 
 import comp307.backend.account.AccountService;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
-import comp307.backend.booking.Object.BookingPK;
-import comp307.backend.booking.Object.BookingRepository;
-import comp307.backend.booking.Object.BookingSlot;
-import comp307.backend.booking.Object.TimeInterval;
+import comp307.backend.booking.Entity.BookingSlot;
+import comp307.backend.booking.Repository.BookingSlotRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class BookingService {
+public class BookingServiceold {
     //TODO limit access
-    public static BookingRepository bookingRepository;
+    private BookingSlotRepository bookingRepository;
 
-    public BookingService(BookingRepository bookingRepository) {
-        this.bookingRepository = bookingRepository;
+    public BookingServiceold(BookingSlotRepository bookingSlotRepository) {
+
     }
-
+    /* 
     public BookingSlot book(String callerEmail, String targetEmail, int beginHour, int beginMinute, int endHour, int endMinute) {
         Optional<User> caller = AccountService.userRepository.findById(callerEmail);
         Optional<User> target = AccountService.userRepository.findById(targetEmail);
@@ -76,5 +75,5 @@ public class BookingService {
         }
     }
 
-
+    */
 }

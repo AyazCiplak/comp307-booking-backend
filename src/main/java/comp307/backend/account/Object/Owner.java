@@ -39,17 +39,4 @@ public class Owner extends User{
 
         return bookingSlots;
     }
-
-    public String generateURL() {
-        // TODO
-        return "";
-    }
-
-    // TODO Owner can delete the booking slot
-
-    // TODO Owner can send an email to the booked person
-
-    // TODO Owner can view all slots and who booked a slot
-
-
 }

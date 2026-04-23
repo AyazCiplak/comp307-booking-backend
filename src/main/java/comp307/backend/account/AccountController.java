@@ -16,6 +16,7 @@ public class AccountController {
     public AccountController(UserRepository userRepository) {
         this.service = new UserService(userRepository);
     }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody String email, @RequestBody String password) {
         User newUser = service.register(email, password);
@@ -41,13 +42,11 @@ public class AccountController {
         return ResponseEntity.ok(service.getFreeSlotOwners());
     }
 
-    @PostMapping("/getSlots/{caller}:{target}")
-    public ResponseEntity<ArrayList<BookingSlot>> getSlots(@PathVariable("caller") String callerEmail, @PathVariable("target") String targetEmail) {
-        ArrayList<BookingSlot> bookingSlots = service.getSlots(callerEmail, targetEmail);
-        if (bookingSlots.isEmpty()) {
-            ResponseEntity.badRequest().body("Selected owner has no available booking slot");
-        }
-        return ResponseEntity.ok(bookingSlots);
+    // callerEmail = targetEmail -> owner viewing their own slots
+    // otherwise is someone else viewing an owner's available slots (activated and free)
+    @PostMapping("/getSlots")
+    public ResponseEntity<ArrayList<BookingSlot>> getSlots(@RequestBody String callerEmail, @RequestBody String targetEmail) {
+        return ResponseEntity.ok(service.getSlots(callerEmail, targetEmail));
     }
     // TODO Users can see all the slots they have booked
 
@@ -55,4 +54,5 @@ public class AccountController {
 
     // TODO Users can logout
 
+    // TODO Owner can send an email to the booked person
 }

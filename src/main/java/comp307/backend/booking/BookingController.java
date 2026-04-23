@@ -35,5 +35,4 @@ public class BookingController {
         service.delete(ownerEmail, beginHour, beginMinute, endHour, endMinute);
         return ResponseEntity.ok(true);
     }
-    // TODO Users can email the owner of a slot
 }

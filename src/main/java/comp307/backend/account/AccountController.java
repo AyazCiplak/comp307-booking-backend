@@ -65,9 +65,11 @@ public class AccountController {
         return ResponseEntity.ok(service.listBooked(email));
     }
 
-    // TODO Users can message the owner of the booking slot
+    @PostMapping("/message")
+    public ResponseEntity<Void> message(@RequestBody String senderEmail, @RequestBody String receiver, @RequestBody String message) {
+        service.message(senderEmail, receiver, message);
+        return ResponseEntity.ok(null);
+    }
 
     // TODO Users can logout
-
-    // TODO Owner can send an email to the booked person
 }

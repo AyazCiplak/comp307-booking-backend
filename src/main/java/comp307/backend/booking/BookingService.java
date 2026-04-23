@@ -50,7 +50,7 @@ public class BookingService {
 
             if (slot.isPresent()) {
                 slot.get().unbook(user);
-                // TODO The slot owner receives a notification email
+                AccountService.sendSimpleEmail(owner.getEmail(), "One of your booking slot is now free", "Reservee " + user.getFirstName() + " " + user.getLastName() + " has canceled their booking to your booking slot in " + slot.get().getTimeInterval().toString() + ", it is now free.");
             }
         }
     }
@@ -67,7 +67,8 @@ public class BookingService {
 
                 User reservee = slot.get().getReservee();
                 if (reservee != null) {
-                    // TODO The reservee receives a notification email
+
+                    AccountService.sendSimpleEmail(reservee.getEmail(), "One of your booking has been deleted", "Owner " + owner.getFirstName() + " " + owner.getLastName() + " has canceled deleted their booking slot in " + slot.get().getTimeInterval().toString());
                 }
 
                 bookingRepository.delete(slot.get());

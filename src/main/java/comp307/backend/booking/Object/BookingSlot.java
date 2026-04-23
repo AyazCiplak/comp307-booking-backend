@@ -46,6 +46,9 @@ public class BookingSlot {
     public boolean isAvailable() {
         return activated && reservee == null; // empty booking = available
     }
+    public TimeInterval getTimeInterval() {
+        return timeInterval;
+    }
 
     @Override
     public boolean equals(Object newSlot) {

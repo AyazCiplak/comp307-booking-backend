@@ -7,6 +7,9 @@ import comp307.backend.booking.BookingService;
 import comp307.backend.booking.Object.BookingPK;
 import comp307.backend.booking.Object.BookingSlot;
 import comp307.backend.booking.Object.TimeInterval;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import java.util.Optional;
 public class AccountService {
     //TODO limit access
     public static UserRepository userRepository;
+    @Autowired
+    public static JavaMailSender mailSender;
     public AccountService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -108,6 +113,22 @@ public class AccountService {
         return BookingService.bookingRepository.findByReservee(user);
     }
 
+    public void message(String senderEmail, String receiverEmail, String message) {
+        User sender = getUser(userRepository, senderEmail);
+        User receiver = getUser(userRepository, receiverEmail);
+        if (sender == null || receiver == null) return;
+
+        sendSimpleEmail(receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
+    }
+
+    // TODO find a better place to hold helper functions
+    public static void sendSimpleEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
     private boolean isRegistered(UserRepository userRepository, String email) {
         return userRepository.findById(email).isPresent();
     }

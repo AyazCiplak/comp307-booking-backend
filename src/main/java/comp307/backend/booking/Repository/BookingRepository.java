@@ -2,7 +2,6 @@
 
 package comp307.backend.booking.Repository;
 
-import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;

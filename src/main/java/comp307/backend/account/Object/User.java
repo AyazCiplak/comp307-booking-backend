@@ -16,6 +16,8 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
+    @Column(name = "isOwner")
+    private boolean isOwner;
     public User(String email, String password) {
         String nameSection = email.split("@")[0];
 
@@ -23,6 +25,8 @@ public class User {
         this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
         this.password = password;
+
+        isOwner = email.endsWith("@mcgill.ca");
     }
 
     public String getFirstName() {
@@ -43,7 +47,7 @@ public class User {
         return password;
     }
     public boolean isOwner() {
-        return false;
+        return isOwner;
     }
 
     @Override

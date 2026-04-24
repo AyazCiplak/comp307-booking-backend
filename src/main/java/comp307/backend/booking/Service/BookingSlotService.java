@@ -4,9 +4,9 @@ package comp307.backend.booking.Service;
 
 import java.time.LocalDateTime;
 
+import comp307.backend.account.Object.User;
 import org.springframework.stereotype.Service;
 
-import comp307.backend.account.Object.Owner;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Repository.BookingSlotRepository;
 
@@ -18,7 +18,7 @@ public class BookingSlotService {
         this.bookingSlotRepository = bookingSlotRepository;
     }
 
-    public BookingSlot createBookingSlot(Owner owner, LocalDateTime start, LocalDateTime end) {
+    public BookingSlot createBookingSlot(User owner, LocalDateTime start, LocalDateTime end) {
         BookingSlot bookingSlot = new BookingSlot(owner, start, end);
         return bookingSlotRepository.save(bookingSlot);
     }

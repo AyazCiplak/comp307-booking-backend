@@ -1,8 +1,6 @@
 package comp307.backend.account;
 
-import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
-import comp307.backend.account.Object.UserRepository;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 // TODO handle failures to process from calls
 @RestController
@@ -42,7 +39,7 @@ public class AccountController {
     }
 
     @PostMapping("/getFreeSlotOwners")
-    public ResponseEntity<List<Owner>> getFreeSlotOwners() {
+    public ResponseEntity<List<User>> getFreeSlotOwners() {
         return ResponseEntity.ok(service.getFreeSlotOwners());
     }
 

@@ -1,16 +1,11 @@
 package comp307.backend.account;
 
-import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
-
-
 import comp307.backend.booking.Repository.BookingRepository;
 import comp307.backend.booking.Repository.BookingSlotRepository;
-import comp307.backend.booking.Service.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -33,14 +28,23 @@ public class AccountService {
         this.bookingRepository = bookingRepository;
         this.mailSender = mailSender;
     }
-    public ArrayList<Owner> getFreeSlotOwners() {
-        ArrayList<Owner> owners = new ArrayList<>();
+    public ArrayList<User> getFreeSlotOwners() {
+        ArrayList<User> owners = new ArrayList<>();
 
         for (User user : userRepository.findAll()) {
-            if (user.isOwner()) {
-                Owner owner = (Owner) user;
-                if (owner.hasAvailableSlots(bookingRepository, bookingSlotRepository)) {
-                    owners.add((Owner) user);
+            if (user.isOwner()) {;
+
+                //TODO add an indicator field in bookingSlot
+                userLoop:
+                for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
+                    if (bookingSlot.isActivated()) {
+                        for (Booking booking : bookingRepository.findBySlotReserved(bookingSlot)) {
+                            if (booking.getReservee() == null) {
+                                owners.add(user);
+                                break userLoop;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -49,14 +53,8 @@ public class AccountService {
     }
 
     public User register(String email, String password) {
-        if (!isRegistered(userRepository, email)) {
-            User user;
-
-            if(isOwner(email)) {
-                user = new Owner(email, password);
-            } else {
-                user = new User(email, password);
-            }
+        if (!isRegistered(email)) {
+            User user = new User(email, password);
 
             userRepository.save(user);
             return user;
@@ -66,7 +64,7 @@ public class AccountService {
     }
 
     public User login(String email, String password) {
-        if (isRegistered(userRepository, email)) {
+        if (isRegistered(email)) {
             Optional<User> userField = userRepository.findById(email);
 
             // user is registered
@@ -89,22 +87,35 @@ public class AccountService {
 
         if (caller.isPresent() && target.isPresent()) {
             User user = caller.get();
-            Owner owner = (Owner) target.get();
+            User owner = target.get();
 
-            bookingSlots = owner.getBookingSlots(user, bookingRepository, bookingSlotRepository);
+            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(owner)) {
+                if (bookingSlot.isActivated() || user.equals(owner)) {
+                    for (Booking booking : bookingRepository.findBySlotReserved(bookingSlot)) {
+                        if (!bookingSlots.contains(bookingSlot) && booking.getReservee() == null) {
+                            bookingSlots.add(bookingSlot);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         return bookingSlots;
     }
 
     public BookingSlot createSlot(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
-        Owner owner = getOwner(userRepository, ownerEmail);
+        User owner = getUser(ownerEmail);
         if (owner == null) return null;
-        return owner.createBookingSlot(bookingSlotRepository, startTime, endTime);
+
+        BookingSlot bookingSlot = new BookingSlot(owner, startTime, endTime);
+        bookingSlotRepository.save(bookingSlot);
+
+        return bookingSlot;
     }
 
     public String setSlotState(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
-        Owner owner = getOwner(userRepository, ownerEmail);
+        User owner = getUser(ownerEmail);
         if (owner == null) return "";
         List<BookingSlot> queryResult = bookingSlotRepository.findByOwner(owner);
         for (BookingSlot bookingSlot : queryResult) {
@@ -117,14 +128,14 @@ public class AccountService {
         return "";
     }
     public List<Booking> listBooked(String email) {
-        User user = getUser(userRepository, email);
+        User user = getUser(email);
         if (user == null) return null;
         return bookingRepository.findByReservee(user);
     }
 
     public void message(String senderEmail, String receiverEmail, String message) {
-        User sender = getUser(userRepository, senderEmail);
-        User receiver = getUser(userRepository, receiverEmail);
+        User sender = getUser(senderEmail);
+        User receiver = getUser(receiverEmail);
         if (sender == null || receiver == null) return;
 
         sendSimpleEmail(receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
@@ -138,21 +149,11 @@ public class AccountService {
         message.setText(body);
         mailSender.send(message);
     }
-    private boolean isRegistered(UserRepository userRepository, String email) {
+    private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
     }
-    private boolean isOwner(String email) {
-        return email.contains("@mcgill.ca");
-    }
-    private Owner getOwner(UserRepository userRepository, String email) {
-        Optional<User> queryResult = userRepository.findById(email);
-        if (queryResult.isPresent()) {
-            return (Owner) queryResult.get();
-        }
-        return null;
-    }
 
-    private User getUser(UserRepository userRepository, String email) {
+    private User getUser(String email) {
         Optional<User> queryResult = userRepository.findById(email);
         if (queryResult.isPresent()) {
             return queryResult.get();

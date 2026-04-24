@@ -3,7 +3,7 @@
 package comp307.backend.booking.Entity;
 
 import java.time.LocalDateTime;
-import comp307.backend.account.Object.Owner;
+import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
 //TODO add some sort of indexing
@@ -16,7 +16,7 @@ public class BookingSlot {
 
     @ManyToOne
     @JoinColumn(name = "ownerEmail")
-    private Owner owner;
+    private User owner;
 
     private LocalDateTime start;
     private LocalDateTime end;
@@ -24,7 +24,7 @@ public class BookingSlot {
 
     protected BookingSlot() {}
 
-    public BookingSlot(Owner owner, LocalDateTime start, LocalDateTime end) {
+    public BookingSlot(User owner, LocalDateTime start, LocalDateTime end) {
         this.owner = owner;
         this.start = start;
         this.end = end;
@@ -34,7 +34,7 @@ public class BookingSlot {
         return this.bookingSlotID;
     }
 
-    public Owner getOwner()
+    public User getOwner()
     {
         return this.owner;
     }

@@ -1,15 +1,8 @@
 package comp307.backend.booking.Service;
 
-import comp307.backend.account.AccountService;
-import comp307.backend.account.Object.Owner;
-import comp307.backend.account.Object.User;
-import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Repository.BookingSlotRepository;
 
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 @Service
 public class BookingServiceold {
     //TODO limit access

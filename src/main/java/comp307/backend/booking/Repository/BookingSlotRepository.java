@@ -2,7 +2,7 @@
 
 package comp307.backend.booking.Repository;
 
-import comp307.backend.account.Object.Owner;
+import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.BookingSlot;
 import java.util.List;
 
@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookingSlotRepository extends JpaRepository<BookingSlot, Long> {
     //quick to expand, just add whats needed
-    List<BookingSlot> findByOwner(Owner owner);
+    List<BookingSlot> findByOwner(User owner);
 }

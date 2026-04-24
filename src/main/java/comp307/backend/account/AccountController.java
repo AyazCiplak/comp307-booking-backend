@@ -3,7 +3,8 @@ package comp307.backend.account;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
-import comp307.backend.booking.Object.BookingSlot;
+import comp307.backend.booking.Entity.BookingSlot;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

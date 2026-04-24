@@ -3,10 +3,9 @@ package comp307.backend.account;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
-import comp307.backend.booking.BookingService;
-import comp307.backend.booking.Object.BookingPK;
-import comp307.backend.booking.Object.BookingSlot;
-import comp307.backend.booking.Object.TimeInterval;
+import comp307.backend.booking.Entity.BookingSlot;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,9 +18,11 @@ import java.util.Optional;
 @Service
 public class AccountService {
     //TODO limit access
-    public static UserRepository userRepository;
+    public UserRepository userRepository;
+
     @Autowired
-    public static JavaMailSender mailSender;
+    public JavaMailSender mailSender;
+    
     public AccountService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -110,7 +111,7 @@ public class AccountService {
     public List<BookingSlot> listBooked(String email) {
         User user = getUser(userRepository, email);
         if (user == null) return null;
-        return BookingService.bookingRepository.findByReservee(user);
+        return BookingServiceold.bookingRepository.findByReservee(user);
     }
 
     public void message(String senderEmail, String receiverEmail, String message) {

@@ -1,9 +1,8 @@
 package comp307.backend.account.Object;
 
-import comp307.backend.booking.Object.BookingSlot;
-import comp307.backend.booking.Object.TimeInterval;
-
 import java.util.ArrayList;
+
+import comp307.backend.booking.Entity.BookingSlot;
 
 public class Owner extends User{
     //TODO should be retrieved in booking repository

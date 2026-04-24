@@ -3,28 +3,35 @@ package comp307.backend.account;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
+import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 
 
+import comp307.backend.booking.Repository.BookingRepository;
+import comp307.backend.booking.Repository.BookingSlotRepository;
+import comp307.backend.booking.Service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AccountService {
-    //TODO limit access
-    public UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BookingSlotRepository bookingSlotRepository;
+    private final BookingRepository bookingRepository;
+    private final JavaMailSender mailSender;
 
-    @Autowired
-    public JavaMailSender mailSender;
-    
-    public AccountService(UserRepository userRepository) {
+    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, JavaMailSender mailSender) {
         this.userRepository = userRepository;
+        this.bookingSlotRepository = bookingSlotRepository;
+        this.bookingRepository = bookingRepository;
+        this.mailSender = mailSender;
     }
     public ArrayList<Owner> getFreeSlotOwners() {
         ArrayList<Owner> owners = new ArrayList<>();
@@ -32,7 +39,7 @@ public class AccountService {
         for (User user : userRepository.findAll()) {
             if (user.isOwner()) {
                 Owner owner = (Owner) user;
-                if (owner.hasAvailableSlots()) {
+                if (owner.hasAvailableSlots(bookingRepository, bookingSlotRepository)) {
                     owners.add((Owner) user);
                 }
             }
@@ -84,34 +91,35 @@ public class AccountService {
             User user = caller.get();
             Owner owner = (Owner) target.get();
 
-            bookingSlots = owner.getBookingSlots(user);
+            bookingSlots = owner.getBookingSlots(user, bookingRepository, bookingSlotRepository);
         }
 
         return bookingSlots;
     }
 
-    public BookingSlot createSlot(String ownerEmail, int beginHour, int beginMinute, int endHour, int endMinute) {
+    public BookingSlot createSlot(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
         Owner owner = getOwner(userRepository, ownerEmail);
         if (owner == null) return null;
-        return owner.createBookingSlot(beginHour, beginMinute, endHour, endMinute);
+        return owner.createBookingSlot(bookingSlotRepository, startTime, endTime);
     }
 
-    public String setSlotState(String ownerEmail, int beginHour, int beginMinute, int endHour, int endMinute) {
+    public String setSlotState(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
         Owner owner = getOwner(userRepository, ownerEmail);
-        if (owner == null) return null;
-        if (owner.getBookingSlots(owner).contains(new BookingSlot(owner, beginHour, beginMinute, endHour, endMinute))) {
-            Optional<BookingSlot> queryResult = BookingService.bookingRepository.findById(new BookingPK(owner, new TimeInterval(beginHour, beginMinute, endHour, endMinute)));
-            if (queryResult.isPresent()) {
-                BookingSlot bookingSlot = queryResult.get();
+        if (owner == null) return "";
+        List<BookingSlot> queryResult = bookingSlotRepository.findByOwner(owner);
+        for (BookingSlot bookingSlot : queryResult) {
+            if (bookingSlot.getStart().equals(startTime) && bookingSlot.getEnd().equals(endTime)) {
                 bookingSlot.activate();
+                return "";
             }
         }
+        // TODO return message
         return "";
     }
-    public List<BookingSlot> listBooked(String email) {
+    public List<Booking> listBooked(String email) {
         User user = getUser(userRepository, email);
         if (user == null) return null;
-        return BookingServiceold.bookingRepository.findByReservee(user);
+        return bookingRepository.findByReservee(user);
     }
 
     public void message(String senderEmail, String receiverEmail, String message) {
@@ -123,7 +131,7 @@ public class AccountService {
     }
 
     // TODO find a better place to hold helper functions
-    public static void sendSimpleEmail(String to, String subject, String body) {
+    public void sendSimpleEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);

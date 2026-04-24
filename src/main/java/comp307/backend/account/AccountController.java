@@ -3,11 +3,13 @@ package comp307.backend.account;
 import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
+import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 // TODO handle failures to process from calls
@@ -15,8 +17,8 @@ import java.util.List;
 @RequestMapping("api/account")
 public class AccountController {
     private final AccountService service;
-    public AccountController(UserRepository userRepository) {
-        this.service = new AccountService(userRepository);
+    public AccountController(AccountService service) {
+        this.service = service;
     }
 
     @PostMapping("/register")
@@ -52,24 +54,24 @@ public class AccountController {
     }
 
     @PostMapping("/createSlot")
-    public ResponseEntity<BookingSlot> createSlot(@RequestBody String ownerEmail, @RequestBody int beginHour, @RequestBody int beginMinute, @RequestBody int endHour, @RequestBody int endMinute) {
-        return ResponseEntity.ok(service.createSlot(ownerEmail, beginHour, beginMinute, endHour, endMinute));
+    public ResponseEntity<BookingSlot> createSlot(@RequestBody String ownerEmail, @RequestBody LocalDateTime startTime, @RequestBody LocalDateTime endTime) {
+        return ResponseEntity.ok(service.createSlot(ownerEmail, startTime, endTime));
     }
 
     @PostMapping("/activate")
-    public ResponseEntity<String> activate(@RequestBody String ownerEmail, @RequestBody int beginHour, @RequestBody int beginMinute, @RequestBody int endHour, int endMinute) {
-        return ResponseEntity.ok(service.setSlotState(ownerEmail, beginHour, beginMinute, endHour, endMinute));
+    public ResponseEntity<String> activate(@RequestBody String ownerEmail, @RequestBody LocalDateTime startTime, @RequestBody LocalDateTime endTime) {
+        return ResponseEntity.ok(service.setSlotState(ownerEmail, startTime, endTime));
     }
 
     @PostMapping("/listBooked")
-    public ResponseEntity<List<BookingSlot>> listBooked(@RequestBody String email) {
+    public ResponseEntity<List<Booking>> listBooked(@RequestBody String email) {
         return ResponseEntity.ok(service.listBooked(email));
     }
 
     @PostMapping("/message")
     public ResponseEntity<Void> message(@RequestBody String senderEmail, @RequestBody String receiver, @RequestBody String message) {
         service.message(senderEmail, receiver, message);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.noContent().build();
     }
 
     // TODO Users can logout

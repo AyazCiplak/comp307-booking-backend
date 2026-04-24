@@ -14,11 +14,15 @@ public class BookingSlot {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long bookingSlotID;
 
+    @ManyToOne
+    @JoinColumn(name = "ownerEmail")
     private Owner owner;
 
     private LocalDateTime start;
     private LocalDateTime end;
     private boolean activated = false;
+
+    protected BookingSlot() {}
 
     public BookingSlot(Owner owner, LocalDateTime start, LocalDateTime end) {
         this.owner = owner;

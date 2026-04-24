@@ -12,8 +12,16 @@ public class Booking {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long bookingID;
 
+    @ManyToOne
+    @JoinColumn(name = "bookingSlotID")
     private BookingSlot slotReserved;
+
+    @ManyToOne
+    @JoinColumn(name = "reserveeEmail")
     private User reservee;
+
+    //for JPA
+    protected Booking() {}
 
     public Booking(BookingSlot slotReserved, User reservee) {
         this.slotReserved = slotReserved;

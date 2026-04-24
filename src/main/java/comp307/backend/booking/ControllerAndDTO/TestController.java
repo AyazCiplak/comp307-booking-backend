@@ -1,4 +1,4 @@
-package comp307.backend.booking.Controller;
+package comp307.backend.booking.ControllerAndDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

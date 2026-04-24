@@ -4,7 +4,7 @@ import comp307.backend.account.Object.Owner;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.booking.Entity.BookingSlot;
-import comp307.backend.booking.Service.BookingServiceold;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,9 +18,11 @@ import java.util.Optional;
 @Service
 public class AccountService {
     //TODO limit access
-    public static UserRepository userRepository;
+    public UserRepository userRepository;
+
     @Autowired
-    public static JavaMailSender mailSender;
+    public JavaMailSender mailSender;
+    
     public AccountService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -98,7 +100,7 @@ public class AccountService {
         Owner owner = getOwner(userRepository, ownerEmail);
         if (owner == null) return null;
         if (owner.getBookingSlots(owner).contains(new BookingSlot(owner, beginHour, beginMinute, endHour, endMinute))) {
-            Optional<BookingSlot> queryResult = BookingServiceold.bookingRepository.findById(new BookingPK(owner, new TimeInterval(beginHour, beginMinute, endHour, endMinute)));
+            Optional<BookingSlot> queryResult = BookingService.bookingRepository.findById(new BookingPK(owner, new TimeInterval(beginHour, beginMinute, endHour, endMinute)));
             if (queryResult.isPresent()) {
                 BookingSlot bookingSlot = queryResult.get();
                 bookingSlot.activate();

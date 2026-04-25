@@ -3,6 +3,7 @@
 package comp307.backend.booking.ControllerAndDTO;
 
 import comp307.backend.booking.Entity.Booking;
+import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
 
 import org.springframework.http.ResponseEntity;

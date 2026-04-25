@@ -7,14 +7,11 @@ import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 // TODO handle failures to process from calls
+//For booking and booking slots (Type 2 and 3 only)
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
@@ -24,9 +21,11 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    
+
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
-        return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReservee()));
+        return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReserveeEmail()));
     }
 
     @DeleteMapping("/{bookingSlotId}")
@@ -35,7 +34,11 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
     
-    // TODO handleCancel
-
+    @PatchMapping("/cancel/{bookingSlotId}")
+    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingSlotId) {
+        bookingService.cancelBookingSlot(bookingSlotId);
+        return ResponseEntity.noContent().build();
+    }
+    
     // TODO handleDelete
 }

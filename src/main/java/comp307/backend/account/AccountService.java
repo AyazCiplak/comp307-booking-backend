@@ -38,7 +38,7 @@ public class AccountService {
                 userLoop:
                 for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
                     if (bookingSlot.isActivated()) {
-                        for (Booking booking : bookingRepository.findBySlotReserved(bookingSlot)) {
+                        for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
                             if (booking.getReservee() == null) {
                                 owners.add(user);
                                 break userLoop;
@@ -79,64 +79,7 @@ public class AccountService {
 
         return null;
     }
-    public ArrayList<BookingSlot> getSlots(String targetEmail) {
-        ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
-        Optional<User> target = userRepository.findById(targetEmail);
 
-        if (target.isPresent()) {
-            User owner = target.get();
-
-            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(owner)) {
-                if (bookingSlot.isActivated()) {
-                    for (Booking booking : bookingRepository.findBySlotReserved(bookingSlot)) {
-                        if (!bookingSlots.contains(bookingSlot) && booking.getReservee() == null) {
-                            bookingSlots.add(bookingSlot);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return bookingSlots;
-    }
-
-    public List<BookingSlot> getAllSlots(String targetEmail) {
-        ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
-        Optional<User> target = userRepository.findById(targetEmail);
-
-        if (target.isPresent()) {
-            User owner = target.get();
-
-            return bookingSlotRepository.findByOwner(owner);
-        }
-
-        return bookingSlots;
-    }
-
-    public BookingSlot createSlot(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
-        User owner = getUser(ownerEmail);
-        if (owner == null) return null;
-
-        BookingSlot bookingSlot = new BookingSlot(owner, startTime, endTime);
-        bookingSlotRepository.save(bookingSlot);
-
-        return bookingSlot;
-    }
-
-    public String setSlotState(String ownerEmail, LocalDateTime startTime, LocalDateTime endTime) {
-        User owner = getUser(ownerEmail);
-        if (owner == null) return "";
-        List<BookingSlot> queryResult = bookingSlotRepository.findByOwner(owner);
-        for (BookingSlot bookingSlot : queryResult) {
-            if (bookingSlot.getStart().equals(startTime) && bookingSlot.getEnd().equals(endTime)) {
-                bookingSlot.activate();
-                return "";
-            }
-        }
-        // TODO return message
-        return "";
-    }
     public List<Booking> listBooked(String email) {
         User user = getUser(email);
         if (user == null) return null;

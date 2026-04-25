@@ -16,11 +16,11 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "bookingSlotID", nullable = false)
-    private BookingSlot bookingSlotID;
+    private BookingSlot bookingSlot;
 
     @ManyToOne
     @JoinColumn(name = "reserveeEmail", nullable = false)
-    private User reserveeEmail;
+    private User reservee;
 
     @Column(nullable = false)
     private LocalDate registeredAt = LocalDate.now();
@@ -28,21 +28,21 @@ public class Booking {
     //for JPA
     protected Booking() {}
 
-    public Booking(BookingSlot bookingSlotID, User reserveeEmail) {
-        this.bookingSlotID = bookingSlotID;
-        this.reserveeEmail = reserveeEmail;
+    public Booking(BookingSlot bookingSlot, User reservee) {
+        this.bookingSlot = bookingSlot;
+        this.reservee = reservee;
     }
 
     public Long getBookingID() {
         return this.bookingID;
     }
 
-    public BookingSlot getBookingSlotID() {
-        return this.bookingSlotID;
+    public BookingSlot getBookingSlot() {
+        return this.bookingSlot;
     }
 
-    public User getReserveeEmail() {
-        return this.reserveeEmail;
+    public User getReservee() {
+        return this.reservee;
     }
 
     public LocalDate getRegisteredAt() {

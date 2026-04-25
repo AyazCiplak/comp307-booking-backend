@@ -2,9 +2,7 @@
 
 package comp307.backend.booking.Entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 

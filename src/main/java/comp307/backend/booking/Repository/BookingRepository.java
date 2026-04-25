@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findBySlotReserved(BookingSlot slotReserved);
+    List<Booking> findByBookingSlot(BookingSlot bookingSlot);
     List<Booking> findByReservee(User reservee);
     //add whatever is needed
 }

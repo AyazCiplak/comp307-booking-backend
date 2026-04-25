@@ -3,6 +3,7 @@ package comp307.backend.booking.Service;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,14 +14,15 @@ import org.springframework.stereotype.Service;
 
 import comp307.backend.booking.Repository.RequestRepository;
 
+//TODO error handling
 @Service
 public class RequestService {
-    private final RequestRepository requestRepository;
     private final UserRepository userRepository;
+    private final RequestRepository requestRepository;
 
-    public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
-        this.requestRepository = requestRepository;
+    public RequestService(UserRepository userRepository, RequestRepository requestRepository) {
         this.userRepository = userRepository;
+        this.requestRepository = requestRepository;
     }
 
 
@@ -49,7 +51,13 @@ public class RequestService {
 
     }
 
-    public List<Request> getPendingRequests() {
-        return requestRepository.findByStatus(Request.RequestStatus.PENDING);
+    public List<Request> getPendingRequests(String ownerEmail) {
+        ArrayList<Request> requests = new ArrayList<>();
+        for (Request request : requestRepository.findByOwner(ownerEmail)) {
+            if (request.isPending()) {
+                requests.add(request);
+            }
+        }
+        return requests;
     }
 }

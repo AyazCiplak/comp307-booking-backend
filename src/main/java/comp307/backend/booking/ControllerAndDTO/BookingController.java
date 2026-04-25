@@ -34,24 +34,8 @@ public class BookingController {
         bookingService.unbook(bookingSlotId);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/requests")
-    public ResponseEntity<Void> requestBooking(@RequestBody RequestBookingRequest request) {
-        bookingService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getRequestDate(), request.getStartTime(), request.getEndTime(), request.getMessage());
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/requests/{id}/accept")
-    public ResponseEntity<Void> acceptRequest(@PathVariable(name = "id") Long requestID) {
-        bookingService.acceptRequest(requestID);
-        return ResponseEntity.noContent().build();
-    }
-
+    
     // TODO handleCancel
 
     // TODO handleDelete
-
-    // TODO handleAcceptRequest
-
-    // TODO handleDeclineRequest
 }

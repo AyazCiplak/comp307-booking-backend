@@ -52,6 +52,7 @@ public class BookingService {
     }
 
     //Type 2
+    //Already enforced on front end that there can't be overlapping groups or end date earlier than start date etc.
     public BookingSlot createGroupBookingSlot() {
         //todo
     }
@@ -68,6 +69,7 @@ public class BookingService {
     }
 
     //TO DO: delete all the bookings since its now cancelled
+    //maybe add email service
     public void cancelBookingSlot(Long bookingSlotId) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.CANCELLED);

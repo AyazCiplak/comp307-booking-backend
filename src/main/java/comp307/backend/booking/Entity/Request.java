@@ -35,11 +35,22 @@ public class Request {
     @Column(nullable = false)
     private RequestStatus status;
     @Column(nullable = false)
-    private long resolvedSlotID;
-    @Column(nullable = false)
     private Timestamp createdAt;
     @Column(nullable = false)
     private Timestamp updatedAt;
+    public Request() {}
+
+    public Request(long id, User requester, User owner, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message, RequestStatus status, Timestamp createdAt, Timestamp updatedAt) {
+        this.id = id;
+        this.requester = requester;
+        this.owner = owner;
+        this.requestedStart = requestedStart;
+        this.requestedEnd = requestedEnd;
+        this.message = message;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public Request(User requester, User owner, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
         this.requester = requester;
@@ -48,7 +59,6 @@ public class Request {
         this.requestedEnd = requestedEnd;
         this.message = message;
         this.status = RequestStatus.PENDING;
-        this.resolvedSlotID = resolvedSlotID; // TODO idk
         this.createdAt = Timestamp.from(Instant.now());
         this.updatedAt = this.createdAt;
     }
@@ -74,10 +84,6 @@ public class Request {
 
     public String getMessage() {
         return message;
-    }
-
-    public long getRequestedSlotID() {
-        return resolvedSlotID;
     }
 
     public Timestamp getCreatedAt() {

@@ -24,11 +24,14 @@ public class RequestService {
     }
 
 
-    public void requestBooking(String requesterEmail, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
+    public Request requestBooking(String requesterEmail, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
         User requester = userRepository.findById(requesterEmail).orElseThrow(() -> new RuntimeException("User " + requesterEmail + " not found."));
         User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
 
-        requestRepository.save(new Request(requester, owner, requestedStart, requestedEnd, message));
+        Request request = new Request(requester, owner, requestedStart, requestedEnd, message);
+        requestRepository.save(request);
+
+        return request;
     }
 
     public void acceptRequest(Long requestID) {
@@ -51,7 +54,10 @@ public class RequestService {
 
     public List<Request> getPendingRequests(String ownerEmail) {
         ArrayList<Request> requests = new ArrayList<>();
-        for (Request request : requestRepository.findByOwner(ownerEmail)) {
+        Optional<User> owner = userRepository.findById(ownerEmail);
+        if (owner.isEmpty()) return requests;
+
+        for (Request request : requestRepository.findByOwner(owner.get())) {
             if (request.isPending()) {
                 requests.add(request);
             }

@@ -21,10 +21,9 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/getRequests")
-    public ResponseEntity<Void> requestBooking(@RequestBody RequestBookingRequest request) {
-        requestService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getStartTime(), request.getEndTime(), request.getMessage());
-        return ResponseEntity.noContent().build();
+    @PostMapping("/requestBooking")
+    public ResponseEntity<Request> requestBooking(@RequestBody RequestBookingRequest request) {
+        return ResponseEntity.ok(requestService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getStartTime(), request.getEndTime(), request.getMessage()));
     }
 
     @PostMapping("/{id}/accept")

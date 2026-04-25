@@ -20,13 +20,11 @@ public class AccountService {
     private final UserRepository userRepository;
     private final BookingSlotRepository bookingSlotRepository;
     private final BookingRepository bookingRepository;
-    private final JavaMailSender mailSender;
 
     public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
-        this.mailSender = mailSender;
     }
     public ArrayList<User> getFreeSlotOwners() {
         ArrayList<User> owners = new ArrayList<>();
@@ -40,7 +38,7 @@ public class AccountService {
                     if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
                         for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
                             if (booking.getReservee() == null) {
-                                owners.add(user);
+
                                 break userLoop;
                             }
                         }
@@ -81,9 +79,9 @@ public class AccountService {
     }
 
     public List<Booking> listBooked(String email) {
-        User user = getUser(email);
-        if (user == null) return null;
-        return bookingRepository.findByReservee(user);
+        Optional<User> user = userRepository.findById(email);
+
+        return user.map(bookingRepository::findByReservee).orElse(null);
     }
 
     /*
@@ -107,13 +105,5 @@ public class AccountService {
     */
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
-    }
-
-    private User getUser(String email) {
-        Optional<User> queryResult = userRepository.findById(email);
-        if (queryResult.isPresent()) {
-            return queryResult.get();
-        }
-        return null;
     }
 }

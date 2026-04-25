@@ -22,11 +22,4 @@ public class BookingSlotService {
         BookingSlot bookingSlot = new BookingSlot(owner, start, end);
         return bookingSlotRepository.save(bookingSlot);
     }
-
-    public BookingSlot activateBookingSlot(Long bookingSlotID) {
-        BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotID).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotID + " not found."));
-
-        bookingSlot.activate();
-        return bookingSlotRepository.save(bookingSlot);
-    }
 }

@@ -3,11 +3,11 @@ package comp307.backend.booking.Service;
 import comp307.backend.booking.Repository.BookingSlotRepository;
 
 import org.springframework.stereotype.Service;
-@Service
+//@Service
 public class BookingServiceold {
-    private BookingSlotRepository bookingRepository;
+    /*private BookingSlotRepository bookingRepository*/;
 
-    public BookingServiceold(BookingSlotRepository bookingSlotRepository) {
+    public BookingServiceold(/*BookingSlotRepository bookingSlotRepository*/) {
 
     }
     /* 

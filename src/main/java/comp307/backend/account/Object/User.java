@@ -18,6 +18,10 @@ public class User {
     private String password;
     @Column(name = "isOwner")
     private boolean isOwner;
+
+    //empty constructor for JPA
+    protected User() {}
+
     public User(String email, String password) {
         String nameSection = email.split("@")[0];
 

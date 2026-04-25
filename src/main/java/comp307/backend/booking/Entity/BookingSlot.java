@@ -52,7 +52,7 @@ public class BookingSlot {
     protected BookingSlot() {}
 
     //Type 3 constructor
-    public BookingSlot(User owner, LocalDateTime startTime, LocalDateTime endTime) {
+    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.owner = owner;
         this.type = BookingSlotType.OFFICE_HOURS;
         this.startDateTime = startDateTime;
@@ -60,11 +60,11 @@ public class BookingSlot {
     }
 
     //Type 2 constructor
-    public BookingSlot(User owner, LocalDateTime startTime, LocalDateTime endTime, MeetingSequence meetingSequence) {
+    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime, MeetingSequence meetingSequence) {
         this.owner = owner;
         this.type = BookingSlotType.GROUP;
-        this.startDateTime = startTime;
-        this.endDateTime = endTime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.meetingSequence = meetingSequence;
         this.maxUsers = meetingSequence.getMaxUsers();
     }

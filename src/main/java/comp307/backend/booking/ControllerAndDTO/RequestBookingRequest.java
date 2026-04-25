@@ -2,19 +2,18 @@ package comp307.backend.booking.ControllerAndDTO;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 public class RequestBookingRequest {
     private String requesterEmail;
     private String ownerEmail;
-    private Date requestDate;
-    private Time startTime;
-    private Time endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String message;
 
-    public RequestBookingRequest(String requesterEmail, String ownerEmail, Date requestDate, Time startTime, Time endTime, String message) {
+    public RequestBookingRequest(String requesterEmail, String ownerEmail, LocalDateTime startTime, LocalDateTime endTime, String message) {
         this.requesterEmail = requesterEmail;
         this.ownerEmail = ownerEmail;
-        this.requestDate = requestDate;
         this.startTime = startTime;
         this.endTime = endTime;
         this.message = message;
@@ -28,15 +27,12 @@ public class RequestBookingRequest {
         return ownerEmail;
     }
 
-    public Date getRequestDate() {
-        return requestDate;
-    }
 
-    public Time getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public Time getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 

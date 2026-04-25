@@ -1,52 +1,97 @@
 package comp307.backend.booking.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "Requests")
 public class Request {
     @GeneratedValue
+    @Id
     private long id;
-    @Column
+    @ManyToOne
+    @JoinColumn(name = "requester_email", nullable = false)
     private String requesterEmail;
+    @ManyToOne
+    @JoinColumn(name = "owner_email", nullable = false)
     @Column
     private String ownerEmail;
-    @Column
-    private Date requestedDate;
-    @Column
-    private Time requestedStart;
-    @Column
-    private Time requestedEnd;
+    @Column(nullable = false)
+    private LocalDateTime requestedStart;
+    @Column(nullable = false)
+    private LocalDateTime requestedEnd;
     @Column
     private String message;
-    @Column
+    @Column(nullable = false)
     private RequestStatus status;
-    @Column
-    private long requestedSlotID;
-    @Column
+    @Column(nullable = false)
+    private long resolvedSlotID;
+    @Column(nullable = false)
     private Timestamp createdAt;
-    @Column
+    @Column(nullable = false)
     private Timestamp updatedAt;
 
-    public Request(String requesterEmail, String ownerEmail, Date requestedDate, Time requestedStart, Time requestedEnd, String message) {
+    public Request(String requesterEmail, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
         this.requesterEmail = requesterEmail;
         this.ownerEmail = ownerEmail;
-        this.requestedDate = requestedDate;
         this.requestedStart = requestedStart;
         this.requestedEnd = requestedEnd;
         this.message = message;
         this.status = RequestStatus.PENDING;
-        this.requestedSlotID = requestedSlotID; // TODO idk
+        this.resolvedSlotID = resolvedSlotID; // TODO idk
         this.createdAt = Timestamp.from(Instant.now());
         this.updatedAt = this.createdAt;
+    }
+    public long getId() {
+        return id;
+    }
+
+    public String getRequesterEmail() {
+        return requesterEmail;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public LocalDateTime getRequestedStart() {
+        return requestedStart;
+    }
+
+    public LocalDateTime getRequestedEnd() {
+        return requestedEnd;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public long getRequestedSlotID() {
+        return resolvedSlotID;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setStatus(boolean accept) {
+        if (accept) {
+            status = RequestStatus.ACCEPTED;
+        } else {
+            status = RequestStatus.DECLINED;
+        }
+    }
+    public boolean isPending() {
+        return status == RequestStatus.PENDING;
     }
 
     public enum RequestStatus {

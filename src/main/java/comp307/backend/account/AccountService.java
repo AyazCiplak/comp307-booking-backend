@@ -37,7 +37,7 @@ public class AccountService {
                 //TODO add an indicator field in bookingSlot
                 userLoop:
                 for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
-                    if (bookingSlot.isActivated()) {
+                    if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
                         for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
                             if (booking.getReservee() == null) {
                                 owners.add(user);

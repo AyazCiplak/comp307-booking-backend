@@ -1,11 +1,11 @@
 package comp307.backend.account.Object.DataTransferObject;
 
-public class LoginRegisterRequest {
+public class LoginRequest {
     private String email;
     private String password;
-    public LoginRegisterRequest() {}
+    public LoginRequest() {}
 
-    public LoginRegisterRequest(String email, String password) {
+    public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

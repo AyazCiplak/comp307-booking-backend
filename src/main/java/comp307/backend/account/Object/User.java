@@ -5,26 +5,40 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 @Entity
 @Table(name = "Users")
 public class User {
-    @Column(name = "first_name")
-    private String firstName;
-    @Column(name = "last_name")
-    private String lastName;
     @Id
     private String email;
-    @Column(name = "password")
+    @Column
+    private String firstName;
+    @Column
+    private String lastName;
+    // TODO needs to be hashed
+    @Column
     private String password;
-    @Column(name = "isOwner")
+    @Column
     private boolean isOwner;
-    public User(String email, String password) {
+    @Column
+    private String department;
+    @Column
+    private String title;
+    @Column
+    private Timestamp createdAt;
+
+    public User(String email, String password, String department, String title) {
         String nameSection = email.split("@")[0];
 
         this.firstName = nameSection.split("\\.")[0];
         this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
         this.password = password;
+        this.department = department;
+        this.title = title;
+        this.createdAt = Timestamp.from(Instant.now());
 
         isOwner = email.endsWith("@mcgill.ca");
     }
@@ -50,6 +64,15 @@ public class User {
         return isOwner;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
     @Override
     public boolean equals(Object newUser) {
         if (newUser instanceof User) {

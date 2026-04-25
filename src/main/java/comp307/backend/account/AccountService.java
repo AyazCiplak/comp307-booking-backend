@@ -54,7 +54,7 @@ public class AccountService {
 
     public User register(String email, String password) {
         if (!isRegistered(email)) {
-            User user = new User(email, password);
+            User user = new User(email, password, "", "");
 
             userRepository.save(user);
             return user;
@@ -148,10 +148,11 @@ public class AccountService {
         User receiver = getUser(receiverEmail);
         if (sender == null || receiver == null) return;
 
-        sendSimpleEmail(receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
+        sendSimpleEmail(mailSender, receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
     }
 
-    public void sendSimpleEmail(String to, String subject, String body) {
+    // TODO move helper functions to somewhere better
+    public static void sendSimpleEmail(JavaMailSender mailSender, String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);

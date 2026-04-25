@@ -1,6 +1,6 @@
 package comp307.backend.account;
 
-import comp307.backend.account.Object.DataTransferObject.LoginRegisterRequest;
+import comp307.backend.account.Object.DataTransferObject.LoginRequest;
 import comp307.backend.account.Object.DataTransferObject.MessageRequest;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.Booking;
@@ -21,7 +21,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody LoginRegisterRequest combo) {
+    public ResponseEntity<?> register(@RequestBody LoginRequest combo) {
         User newUser = service.register(combo.getEmail(), combo.getPassword());
         if (newUser != null) {
             return ResponseEntity.ok(newUser);
@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRegisterRequest combo) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest combo) {
         User user = service.login(combo.getEmail(), combo.getPassword());
         if (user != null) {
             return ResponseEntity.ok(user);

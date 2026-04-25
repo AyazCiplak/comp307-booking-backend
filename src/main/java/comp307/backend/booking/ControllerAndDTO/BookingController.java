@@ -36,13 +36,13 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/user/getSlots")
-    public ResponseEntity<List<BookingSlot>> getSlots(@RequestBody String targetEmail) {
+    @PostMapping("/owner/getAllAvailableOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));
     }
     
-    @PostMapping("/owner/getSlots")
-    public ResponseEntity<List<BookingSlot>> getAllSlots(@RequestBody String targetEmail) {
+    @PostMapping("/owner/getAllOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestBody String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllOwnedSlots(targetEmail));
     }
 

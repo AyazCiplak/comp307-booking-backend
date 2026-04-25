@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import comp307.backend.account.Object.User;
+import comp307.backend.account.Object.UserRepository;
 import comp307.backend.booking.Entity.Request;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +16,19 @@ import comp307.backend.booking.Repository.RequestRepository;
 @Service
 public class RequestService {
     private final RequestRepository requestRepository;
-    
-    public RequestService(RequestRepository requestRepository) {
+    private final UserRepository userRepository;
+
+    public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
         this.requestRepository = requestRepository;
+        this.userRepository = userRepository;
     }
 
 
     public void requestBooking(String requesterEmail, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
-        requestRepository.save(new Request(requesterEmail, ownerEmail, requestedStart, requestedEnd, message));
+        User requester = userRepository.findById(requesterEmail).orElseThrow(() -> new RuntimeException("User " + requesterEmail + " not found."));
+        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
+
+        requestRepository.save(new Request(requester, owner, requestedStart, requestedEnd, message));
     }
 
     public void acceptRequest(Long requestID) {

@@ -9,19 +9,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import comp307.backend.account.Object.User;
+
 @Entity
 @Table(name = "Requests")
 public class Request {
     @GeneratedValue
     @Id
     private long id;
+
     @ManyToOne
-    @JoinColumn(name = "requester_email", nullable = false)
-    private String requesterEmail;
+    @JoinColumn(name = "requesterEmail", nullable = false)
+    private User requester;
+
     @ManyToOne
-    @JoinColumn(name = "owner_email", nullable = false)
-    @Column
-    private String ownerEmail;
+    @JoinColumn(name = "ownerEmail", nullable = false)
+    private User owner;
+
     @Column(nullable = false)
     private LocalDateTime requestedStart;
     @Column(nullable = false)
@@ -37,9 +41,9 @@ public class Request {
     @Column(nullable = false)
     private Timestamp updatedAt;
 
-    public Request(String requesterEmail, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
-        this.requesterEmail = requesterEmail;
-        this.ownerEmail = ownerEmail;
+    public Request(User requester, User owner, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
+        this.requester = requester;
+        this.owner = owner;
         this.requestedStart = requestedStart;
         this.requestedEnd = requestedEnd;
         this.message = message;
@@ -52,12 +56,12 @@ public class Request {
         return id;
     }
 
-    public String getRequesterEmail() {
-        return requesterEmail;
+    public User getRequester() {
+        return requester;
     }
 
-    public String getOwnerEmail() {
-        return ownerEmail;
+    public User getOwner() {
+        return owner;
     }
 
     public LocalDateTime getRequestedStart() {

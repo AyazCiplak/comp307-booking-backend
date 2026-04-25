@@ -2,7 +2,9 @@
 
 package comp307.backend.booking.Entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
@@ -15,21 +17,59 @@ public class BookingSlot {
     private Long bookingSlotID;
 
     @ManyToOne
-    @JoinColumn(name = "ownerEmail")
+    @JoinColumn(name = "ownerEmail", nullable = false)
     private User owner;
 
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private boolean activated = false;
+    //Only for Type 2 (group meeting)
+    @ManyToOne
+    @JoinColumn(name = "sequenceID")
+    private MeetingSequence meetingSequence;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookingSlotType type;
+
+    //look into how this should be set, maybe at constructor in which case not nullable or maybe by a setter
+    private String title;
+
+    @Column(nullable = false)
+    private LocalDateTime startDateTime;
+    @Column(nullable = false)
+    private LocalDateTime endDateTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookingSlotStatus slotStatus = BookingSlotStatus.AVAILABLE;
+
+    //Only for Type 2 (group meeting)
+    private int maxUsers;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(nullable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     //for JPA
     protected BookingSlot() {}
 
-    public BookingSlot(User owner, LocalDateTime start, LocalDateTime end) {
+    //Type 3 constructor
+    public BookingSlot(User owner, LocalDateTime startTime, LocalDateTime endTime) {
         this.owner = owner;
-        this.start = start;
-        this.end = end;
+        this.type = BookingSlotType.OFFICE_HOURS;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
+
+    //Type 2 constructor
+    public BookingSlot(User owner, LocalDateTime startTime, LocalDateTime endTime, MeetingSequence meetingSequence) {
+        this.owner = owner;
+        this.type = BookingSlotType.GROUP;
+        this.startDateTime = startTime;
+        this.endDateTime = endTime;
+        this.meetingSequence = meetingSequence;
+        this.maxUsers = meetingSequence.getMaxUsers();
+    }
+
 
     public Long getBookingSlotID() {
         return this.bookingSlotID;
@@ -40,19 +80,54 @@ public class BookingSlot {
         return this.owner;
     }
 
+    public BookingSlotType getType() {
+        return this.type;
+    }
+
     public LocalDateTime getStart() {
-        return this.start;
+        return this.startDateTime;
     }
 
-    public LocalDateTime getEnd() {
-        return this.end;
+    public LocalDateTime getEndDateTime() {
+        return this.endDateTime;
     }
 
-    public boolean isActivated() {
-        return this.activated;
+    public BookingSlotStatus getSlotStatus() {
+        return this.slotStatus;
+    }
+    
+    public MeetingSequence getSequence() {
+        return this.meetingSequence;
     }
 
-    public void activate() {
-        this.activated = true;
+     public int getMaxUsers() {
+        return this.maxUsers;
+    }
+
+     public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+     public void setSlotStatus(BookingSlotStatus newStatus) {
+        this.slotStatus = newStatus;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+
+
+
+    public enum BookingSlotType {
+        GROUP,
+        OFFICE_HOURS
+    }
+
+    public enum BookingSlotStatus {
+        AVAILABLE,
+        BOOKED,
+        CANCELLED
     }
 }

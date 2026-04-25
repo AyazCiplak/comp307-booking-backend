@@ -1,3 +1,5 @@
+//Programmed by Henry Niedermayer
+
 package comp307.backend.booking.Service;
 
 import org.springframework.stereotype.Service;
@@ -20,11 +22,11 @@ public class BookingService {
     public Booking book(Long bookingSlotId, User reservee) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
 
-        if (!bookingSlot.isActivated()) {
-            throw new RuntimeException("Slot " + bookingSlotId + " is not active.");
+        if (!bookingSlot.getSlotStatus().equals(BookingSlot.BookingSlotStatus.AVAILABLE)) {
+            throw new RuntimeException("Slot " + bookingSlotId + " is not available.");
         }
 
-        //TO DO: Will need to check if its already booked unless it is a group meeting.
+        //TO DO: Will need to expand this to handle group meetings by using maxUsers
 
         return bookingRepository.save(new Booking(bookingSlot, reservee));
     }

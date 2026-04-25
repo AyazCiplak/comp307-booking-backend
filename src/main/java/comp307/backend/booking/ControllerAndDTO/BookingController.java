@@ -3,7 +3,6 @@
 package comp307.backend.booking.ControllerAndDTO;
 
 import comp307.backend.booking.Entity.Booking;
-import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
 
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,17 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    
+    @PostMapping("/createRecurringBookingSlot")
+    public ResponseEntity<Void> createRecurringBookingSlot(@RequestBody CreateRecurringBookingSlot request) {
+        bookingService.createRecurringBookingSlot(request.getOwnerEmail(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/cancel/{bookingSlotId}")
+    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingSlotId) {
+        bookingService.cancelBookingSlot(bookingSlotId);
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
@@ -31,12 +40,6 @@ public class BookingController {
     @DeleteMapping("/{bookingSlotId}")
     public ResponseEntity<Void> unbook(@PathVariable Long bookingSlotId) {
         bookingService.unbook(bookingSlotId);
-        return ResponseEntity.noContent().build();
-    }
-    
-    @PatchMapping("/cancel/{bookingSlotId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingSlotId) {
-        bookingService.cancelBookingSlot(bookingSlotId);
         return ResponseEntity.noContent().build();
     }
     

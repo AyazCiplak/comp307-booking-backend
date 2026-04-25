@@ -160,6 +160,7 @@ public class AccountService {
         message.setText(body);
         mailSender.send(message);
     }
+    */
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
     }

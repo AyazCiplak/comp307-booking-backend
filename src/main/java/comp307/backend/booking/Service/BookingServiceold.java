@@ -5,7 +5,6 @@ import comp307.backend.booking.Repository.BookingSlotRepository;
 import org.springframework.stereotype.Service;
 @Service
 public class BookingServiceold {
-    //TODO limit access
     private BookingSlotRepository bookingRepository;
 
     public BookingServiceold(BookingSlotRepository bookingSlotRepository) {

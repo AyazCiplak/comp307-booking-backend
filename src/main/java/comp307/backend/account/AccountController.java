@@ -1,5 +1,7 @@
 package comp307.backend.account;
 
+import comp307.backend.account.Object.DataTransferObject.LoginRegisterRequest;
+import comp307.backend.account.Object.DataTransferObject.MessageRequest;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
@@ -19,8 +21,8 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody String email, @RequestBody String password) {
-        User newUser = service.register(email, password);
+    public ResponseEntity<?> register(@RequestBody LoginRegisterRequest combo) {
+        User newUser = service.register(combo.getEmail(), combo.getPassword());
         if (newUser != null) {
             return ResponseEntity.ok(newUser);
         } else {
@@ -29,8 +31,8 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody String email, @RequestBody String password) {
-        User user = service.login(email, password);
+    public ResponseEntity<?> login(@RequestBody LoginRegisterRequest combo) {
+        User user = service.login(combo.getEmail(), combo.getPassword());
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -43,11 +45,13 @@ public class AccountController {
         return ResponseEntity.ok(service.getFreeSlotOwners());
     }
 
-    // callerEmail = targetEmail -> owner viewing their own slots
-    // otherwise is someone else viewing an owner's available slots (activated and free)
-    @PostMapping("/getSlots")
-    public ResponseEntity<List<BookingSlot>> getSlots(@RequestBody String callerEmail, @RequestBody String targetEmail) {
-        return ResponseEntity.ok(service.getSlots(callerEmail, targetEmail));
+    @PostMapping("/user/getSlots")
+    public ResponseEntity<List<BookingSlot>> getSlots(@RequestBody String targetEmail) {
+        return ResponseEntity.ok(service.getSlots(targetEmail));
+    }
+    @PostMapping("/owner/getSlots")
+    public ResponseEntity<List<BookingSlot>> getAllSlots(@RequestBody String targetEmail) {
+        return ResponseEntity.ok(service.getAllSlots(targetEmail));
     }
 
     @PostMapping("/createSlot")
@@ -66,8 +70,8 @@ public class AccountController {
     }
 
     @PostMapping("/message")
-    public ResponseEntity<Void> message(@RequestBody String senderEmail, @RequestBody String receiver, @RequestBody String message) {
-        service.message(senderEmail, receiver, message);
+    public ResponseEntity<Void> message(@RequestBody MessageRequest messageRequest) {
+        service.message(messageRequest.getSenderEmail(), messageRequest.getReceiverEmail(), messageRequest.getMessage());
         return ResponseEntity.noContent().build();
     }
 

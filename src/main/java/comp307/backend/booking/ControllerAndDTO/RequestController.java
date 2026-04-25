@@ -1,5 +1,6 @@
 package comp307.backend.booking.ControllerAndDTO;
 
+import comp307.backend.booking.Entity.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import comp307.backend.booking.Service.RequestService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/requests")
@@ -18,21 +21,26 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/requests")
+    @PostMapping("/getRequests")
     public ResponseEntity<Void> requestBooking(@RequestBody RequestBookingRequest request) {
         requestService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getStartTime(), request.getEndTime(), request.getMessage());
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/requests/{id}/accept")
+    @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptRequest(@PathVariable(name = "id") Long requestID) {
         requestService.acceptRequest(requestID);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/requests/{id}/decline")
+    @PostMapping("/{id}/decline")
     public ResponseEntity<Void> declineRequest(@PathVariable(name = "id") Long requestID) {
         requestService.declineRequest(requestID);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/getAllPendingRequests")
+    public ResponseEntity<List<Request>> getAllPendingRequests(@RequestBody String ownerEmail) {
+        return ResponseEntity.ok(requestService.getPendingRequests(ownerEmail));
     }
 }

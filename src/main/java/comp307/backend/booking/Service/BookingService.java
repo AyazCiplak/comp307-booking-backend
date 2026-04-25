@@ -116,24 +116,5 @@ public class BookingService {
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.AVAILABLE);
         bookingSlotRepository.save(bookingSlot);
         bookingRepository.delete(booking);
-    }
-
-
-
-
-    /*
-    Should be moved to Type 1 Service since it uses different table.
-
-    public void requestBooking(String requesterEmail, String ownerEmail, Date requestedDate, Time requestedStart, Time requestedEnd, String message) {
-        requestRepository.save(new Request(requesterEmail, ownerEmail, requestedDate, requestedStart, requestedEnd, message));
-    }
-
-    public void acceptRequest(Long requestID) {
-        Optional<Request> request = requestRepository.findById(requestID);
-
-        if (request.isPresent()) {
-
-        }
-    }
-    */
+    }   
 }

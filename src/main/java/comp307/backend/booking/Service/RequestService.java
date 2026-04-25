@@ -1,7 +1,5 @@
 package comp307.backend.booking.Service;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

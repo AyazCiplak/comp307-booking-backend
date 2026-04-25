@@ -55,6 +55,7 @@ public class BookingService {
     //Already enforced on front end that there can't be overlapping groups or end date earlier than start date etc.
     public BookingSlot createGroupBookingSlot() {
         //todo
+        throw new RuntimeException("Not implemented yet");
     }
 
     public List<BookingSlot> getAllOwnedSlots(String ownerEmail) {

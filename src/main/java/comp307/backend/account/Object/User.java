@@ -28,7 +28,8 @@ public class User {
     private String title;
     @Column
     private Timestamp createdAt;
-
+    //empty constructor for JPA
+    protected User() {}
     public User(String email, String password, String department, String title) {
         String nameSection = email.split("@")[0];
 

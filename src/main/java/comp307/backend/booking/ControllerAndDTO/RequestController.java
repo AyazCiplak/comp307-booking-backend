@@ -2,11 +2,7 @@ package comp307.backend.booking.ControllerAndDTO;
 
 import comp307.backend.booking.Entity.Request;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import comp307.backend.booking.Service.RequestService;
 
@@ -38,8 +34,8 @@ public class RequestController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/getAllPendingRequests")
-    public ResponseEntity<List<Request>> getAllPendingRequests(@RequestBody String ownerEmail) {
+    @GetMapping("/{ownerEmail}/getAllPendingRequests")
+    public ResponseEntity<List<Request>> getAllPendingRequests(@PathVariable String ownerEmail) {
         return ResponseEntity.ok(requestService.getPendingRequests(ownerEmail));
     }
 }

@@ -83,7 +83,7 @@ public class BookingSlot {
         return this.type;
     }
 
-    public LocalDateTime getStart() {
+    public LocalDateTime getStartDateTime() {
         return this.startDateTime;
     }
 

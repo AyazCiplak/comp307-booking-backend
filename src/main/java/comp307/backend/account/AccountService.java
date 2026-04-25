@@ -143,6 +143,8 @@ public class AccountService {
         return bookingRepository.findByReservee(user);
     }
 
+    /*
+    Dont need to send email on backend
     public void message(String senderEmail, String receiverEmail, String message) {
         User sender = getUser(senderEmail);
         User receiver = getUser(receiverEmail);

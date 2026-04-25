@@ -6,11 +6,9 @@ import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Repository.BookingRepository;
 import comp307.backend.booking.Repository.BookingSlotRepository;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +19,7 @@ public class AccountService {
     private final BookingSlotRepository bookingSlotRepository;
     private final BookingRepository bookingRepository;
 
-    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, JavaMailSender mailSender) {
+    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;

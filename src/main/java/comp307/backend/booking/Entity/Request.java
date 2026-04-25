@@ -32,6 +32,7 @@ public class Request {
     private LocalDateTime requestedEnd;
     @Column
     private String message;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status;
     @Column(nullable = false)

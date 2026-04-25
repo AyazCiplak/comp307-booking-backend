@@ -143,6 +143,8 @@ public class AccountService {
         return bookingRepository.findByReservee(user);
     }
 
+    /*
+    Dont need to send email on backend
     public void message(String senderEmail, String receiverEmail, String message) {
         User sender = getUser(senderEmail);
         User receiver = getUser(receiverEmail);
@@ -159,6 +161,7 @@ public class AccountService {
         message.setText(body);
         mailSender.send(message);
     }
+    */
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
     }

@@ -2,41 +2,50 @@
 
 package comp307.backend.booking.Entity;
 
+import java.time.LocalDate;
+
 import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Bookings")
+@Table(name = "Bookings", uniqueConstraints = {@UniqueConstraint(columnNames = {"bookingSlotID", "reserveeEmail"})})
 public class Booking {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long bookingID;
 
     @ManyToOne
-    @JoinColumn(name = "bookingSlotID")
-    private BookingSlot slotReserved;
+    @JoinColumn(name = "bookingSlotID", nullable = false)
+    private BookingSlot bookingSlotID;
 
     @ManyToOne
-    @JoinColumn(name = "reserveeEmail")
-    private User reservee;
+    @JoinColumn(name = "reserveeEmail", nullable = false)
+    private User reserveeEmail;
+
+    @Column(nullable = false)
+    private LocalDate registeredAt = LocalDate.now();
 
     //for JPA
     protected Booking() {}
 
-    public Booking(BookingSlot slotReserved, User reservee) {
-        this.slotReserved = slotReserved;
-        this.reservee = reservee;
+    public Booking(BookingSlot bookingSlotID, User reserveeEmail) {
+        this.bookingSlotID = bookingSlotID;
+        this.reserveeEmail = reserveeEmail;
     }
 
     public Long getBookingID() {
         return this.bookingID;
     }
 
-    public BookingSlot getBookingSlotReserved() {
-        return this.slotReserved;
+    public BookingSlot getBookingSlotID() {
+        return this.bookingSlotID;
     }
 
-    public User getReservee() {
-        return this.reservee;
+    public User getReserveeEmail() {
+        return this.reserveeEmail;
+    }
+
+    public LocalDate getRegisteredAt() {
+        return this.registeredAt;
     }
 }

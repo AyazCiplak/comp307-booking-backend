@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
-//TODO add some sort of indexing
 @Entity
 @Table(name = "BookingSlots")
 public class BookingSlot {

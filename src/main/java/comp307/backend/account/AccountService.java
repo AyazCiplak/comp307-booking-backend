@@ -79,18 +79,15 @@ public class AccountService {
 
         return null;
     }
-
-    public ArrayList<BookingSlot> getSlots(String callerEmail, String targetEmail) {
+    public ArrayList<BookingSlot> getSlots(String targetEmail) {
         ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
-        Optional<User> caller = userRepository.findById(callerEmail);
         Optional<User> target = userRepository.findById(targetEmail);
 
-        if (caller.isPresent() && target.isPresent()) {
-            User user = caller.get();
+        if (target.isPresent()) {
             User owner = target.get();
 
             for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(owner)) {
-                if (bookingSlot.isActivated() || user.equals(owner)) {
+                if (bookingSlot.isActivated()) {
                     for (Booking booking : bookingRepository.findBySlotReserved(bookingSlot)) {
                         if (!bookingSlots.contains(bookingSlot) && booking.getReservee() == null) {
                             bookingSlots.add(bookingSlot);
@@ -99,6 +96,19 @@ public class AccountService {
                     }
                 }
             }
+        }
+
+        return bookingSlots;
+    }
+
+    public List<BookingSlot> getAllSlots(String targetEmail) {
+        ArrayList<BookingSlot> bookingSlots = new ArrayList<>();
+        Optional<User> target = userRepository.findById(targetEmail);
+
+        if (target.isPresent()) {
+            User owner = target.get();
+
+            return bookingSlotRepository.findByOwner(owner);
         }
 
         return bookingSlots;
@@ -141,7 +151,6 @@ public class AccountService {
         sendSimpleEmail(receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
     }
 
-    // TODO find a better place to hold helper functions
     public void sendSimpleEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

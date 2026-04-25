@@ -2,8 +2,6 @@
 
 package comp307.backend.booking.Service;
 
-import comp307.backend.booking.Entity.Request;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import comp307.backend.account.Object.User;
@@ -69,12 +67,16 @@ public class BookingService {
         return getAllOwnedSlots(ownerEmail).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
     }
 
-    //TO DO: delete all the bookings since its now cancelled
-    //maybe add email service
+    //maybe add email service, or frontend could default open email with all the people whose bookings got cancelled in which case can return list of emails that should be notified
     public void cancelBookingSlot(Long bookingSlotId) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.CANCELLED);
         bookingSlotRepository.save(bookingSlot);
+
+        List<Booking> bookings = bookingRepository.findByBookingSlot(bookingSlot);
+        for (Booking booking : bookings) {
+            bookingRepository.delete(booking);
+        }
     }
 
 

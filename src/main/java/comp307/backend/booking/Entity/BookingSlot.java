@@ -21,6 +21,7 @@ public class BookingSlot {
     private LocalDateTime end;
     private boolean activated = false;
 
+    //for JPA
     protected BookingSlot() {}
 
     public BookingSlot(User owner, LocalDateTime start, LocalDateTime end) {

@@ -9,6 +9,9 @@ import comp307.backend.booking.Service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 // TODO handle failures to process from calls
 //For booking and booking slots (Type 2 and 3 only)
@@ -21,7 +24,14 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    
+    @PostMapping("/user/getSlots")
+    public ResponseEntity<List<BookingSlot>> getSlots(@RequestBody String targetEmail) {
+        return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));
+    }
+    @PostMapping("/owner/getSlots")
+    public ResponseEntity<List<BookingSlot>> getAllSlots(@RequestBody String targetEmail) {
+        return ResponseEntity.ok(bookingService.getAllOwnedSlots(targetEmail));
+    }
 
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {

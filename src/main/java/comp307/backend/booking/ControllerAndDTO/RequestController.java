@@ -20,7 +20,7 @@ public class RequestController {
 
     @PostMapping("/requests")
     public ResponseEntity<Void> requestBooking(@RequestBody RequestBookingRequest request) {
-        requestService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getRequestDate(), request.getStartTime(), request.getEndTime(), request.getMessage());
+        requestService.requestBooking(request.getRequesterEmail(), request.getOwnerEmail(), request.getStartTime(), request.getEndTime(), request.getMessage());
         return ResponseEntity.noContent().build();
     }
 
@@ -30,7 +30,9 @@ public class RequestController {
         return ResponseEntity.noContent().build();
     }
 
-    // TODO handleAcceptRequest
-
-    // TODO handleDeclineRequest
+    @PostMapping("/requests/{id}/decline")
+    public ResponseEntity<Void> declineRequest(@PathVariable(name = "id") Long requestID) {
+        requestService.declineRequest(requestID);
+        return ResponseEntity.noContent().build();
+    }
 }

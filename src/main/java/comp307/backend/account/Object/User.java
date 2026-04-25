@@ -13,20 +13,20 @@ import java.time.Instant;
 public class User {
     @Id
     private String email;
-    @Column
+    @Column(nullable = false)
     private String firstName;
-    @Column
+    @Column(nullable = false)
     private String lastName;
     // TODO needs to be hashed
-    @Column
+    @Column(nullable = false)
     private String password;
-    @Column
+    @Column(nullable = false)
     private boolean isOwner;
     @Column
     private String department;
     @Column
     private String title;
-    @Column
+    @Column(nullable = false)
     private Timestamp createdAt;
     //empty constructor for JPA
     protected User() {}

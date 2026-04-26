@@ -20,7 +20,7 @@ public class BookingSlot {
     //Only for Type 2 (group meeting)
     @ManyToOne
     @JoinColumn(name = "sequenceID")
-    private MeetingSequence meetingSequence;
+    private GroupMeetingInstance groupMeetingInstance;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -57,14 +57,14 @@ public class BookingSlot {
         this.endDateTime = endDateTime;
     }
 
-    //Type 2 constructor
-    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime, MeetingSequence meetingSequence) {
+    //Type 2 proposal constructor
+    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime, GroupMeetingInstance groupMeetingInstance) {
         this.owner = owner;
-        this.type = BookingSlotType.GROUP;
+        this.type = BookingSlotType.GROUP_PROPOSAL;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.meetingSequence = meetingSequence;
-        this.maxUsers = meetingSequence.getMaxUsers();
+        this.groupMeetingInstance = groupMeetingInstance;
+        this.maxUsers = groupMeetingInstance.getMaxUsers();
     }
 
 
@@ -77,7 +77,7 @@ public class BookingSlot {
         return this.owner;
     }
 
-    public BookingSlotType getType() {
+    public BookingSlotType getSlotType() {
         return this.type;
     }
 
@@ -93,8 +93,8 @@ public class BookingSlot {
         return this.slotStatus;
     }
     
-    public MeetingSequence getSequence() {
-        return this.meetingSequence;
+    public GroupMeetingInstance getSequence() {
+        return this.groupMeetingInstance;
     }
 
      public int getMaxUsers() {
@@ -114,17 +114,23 @@ public class BookingSlot {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void markAsSelected() {
+        this.type = BookingSlotType.GROUP_SELECTED;
+        this.updatedAt = LocalDateTime.now();
+    }
+
 
 
 
     public enum BookingSlotType {
-        GROUP,
+        GROUP_PROPOSAL,
+        GROUP_SELECTED,
         OFFICE_HOURS
     }
 
     public enum BookingSlotStatus {
-        AVAILABLE,
-        BOOKED,
+        AVAILABLE, //means there's space
+        BOOKED, //no space
         CANCELLED
     }
 }

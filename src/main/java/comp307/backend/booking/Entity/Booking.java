@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
+//Booking, context dependent. If booked to a BookingSlot of type GROUP_PROPOSAL then it's a submission of availability for that Slot
 @Entity
 @Table(name = "Bookings", uniqueConstraints = {@UniqueConstraint(columnNames = {"bookingSlotID", "reserveeEmail"})})
 public class Booking {

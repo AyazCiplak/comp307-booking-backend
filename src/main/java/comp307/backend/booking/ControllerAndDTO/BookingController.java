@@ -2,6 +2,7 @@
 
 package comp307.backend.booking.ControllerAndDTO;
 
+import comp307.backend.account.AccountController;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
@@ -17,16 +18,23 @@ import java.util.List;
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
+    private final AccountController accountController;
     private final BookingService bookingService;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, AccountController accountController) {
         this.bookingService = bookingService;
+        this.accountController = accountController;
     }
 
     @PostMapping("/createRecurringBookingSlot")
     public ResponseEntity<Void> createRecurringBookingSlot(@RequestBody CreateRecurringBookingSlot request) {
         bookingService.createRecurringBookingSlot(request.getOwnerEmail(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/createGroupMeetingBookingProposalSlot")
+    public ResponseEntity<BookingSlot> createGroupMeetingBookingProposalSlot(@RequestBody CreateGroupMeetingProposalSlot request) {
+        return ResponseEntity.ok(bookingService.createGroupMeetingBookingProposalSlot(request.getGroupMeetingInstanceID(), request.getStartDateTime(), request.getEndDateTime()));
     }
 
     @PatchMapping("/cancel/{bookingSlotId}")
@@ -48,6 +56,11 @@ public class BookingController {
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
         return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReserveeEmail()));
+    }
+
+    @PostMapping("/markAvailabilityForProposal")
+    public ResponseEntity<Booking> markAvailabilityForProposal(@RequestBody CreateBookingRequest request) {
+        return ResponseEntity.ok(bookingService.markAvailabilityForProposal(request.getSlotId(), request.getReserveeEmail()));
     }
 
     @DeleteMapping("/{bookingSlotId}")

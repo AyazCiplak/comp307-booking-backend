@@ -19,7 +19,6 @@ import comp307.backend.booking.Repository.RequestRepository;
 
 import javax.naming.NoPermissionException;
 
-//TODO permission tests (user shouldn't be
 @Service
 public class RequestService {
     private final UserRepository userRepository;

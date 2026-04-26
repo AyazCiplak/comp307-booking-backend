@@ -15,7 +15,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-//TODO all auth related runtime exception should not return the token
 @Service
 public class AccountService {
     final UserRepository userRepository;

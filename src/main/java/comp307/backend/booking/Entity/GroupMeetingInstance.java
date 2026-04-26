@@ -8,11 +8,11 @@ import comp307.backend.account.Object.User;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "MeetingSequences", uniqueConstraints = {@UniqueConstraint(columnNames = {"inviteToken"})})
-public class MeetingSequence {
+@Table(name = "GroupMeetingInstances", uniqueConstraints = {@UniqueConstraint(columnNames = {"inviteToken"})})
+public class GroupMeetingInstance {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long meetingSequenceID;
+    private Long groupMeetingInstanceID;
 
     @ManyToOne
     @JoinColumn(name = "ownerEmail", nullable = false)
@@ -29,9 +29,9 @@ public class MeetingSequence {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     //for JPA
-    protected MeetingSequence() {}
+    protected GroupMeetingInstance() {}
 
-    public MeetingSequence(User owner, String name, int maxUsers, String inviteToken) {
+    public GroupMeetingInstance(User owner, String name, int maxUsers, String inviteToken) {
         this.owner = owner;
         this.name = name;
         this.maxUsers = maxUsers;
@@ -39,8 +39,8 @@ public class MeetingSequence {
     }
 
 
-    public Long getMeetingSequenceID() {
-        return this.meetingSequenceID;
+    public Long getGroupMeetingInstanceID() {
+        return this.groupMeetingInstanceID;
     }
 
     public User getOwner() {

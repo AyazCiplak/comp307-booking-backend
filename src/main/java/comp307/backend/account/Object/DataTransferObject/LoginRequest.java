@@ -1,3 +1,4 @@
+//Programmed by Mao Yurun
 package comp307.backend.account.Object.DataTransferObject;
 
 public class LoginRequest {

@@ -2,16 +2,11 @@
 package comp307.backend.account;
 
 import comp307.backend.account.Object.DataTransferObject.LoginRequest;
-import comp307.backend.account.Object.DataTransferObject.MessageRequest;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.Booking;
-import comp307.backend.booking.Entity.BookingSlot;
-
-import comp307.backend.booking.Service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 // TODO handle failures to process from calls
 @RestController

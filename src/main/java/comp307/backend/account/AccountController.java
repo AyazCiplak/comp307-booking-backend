@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
-// TODO handle failures to process from calls
 @RestController
 @RequestMapping("api/account")
 public class AccountController {

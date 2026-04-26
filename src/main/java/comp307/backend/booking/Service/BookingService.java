@@ -36,8 +36,8 @@ public class BookingService {
     //Type 3
     //startDateTimes/endDateTimes are not to be confused with listing all the weeks. Instead, they list the first weeks time slots. For example Monday Jan 1st 2/3 pm and Tuesday Jan 2nd 3/4 pm. 
     //From this we use weeksToRepeat to loop and make booking slots for the future weeks.
-    public void createRecurringBookingSlot(String ownerEmail, String title, List<LocalDateTime> startDateTimes, List<LocalDateTime> endDateTimes, int weeksToRepeat) {
-        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
+    public void createRecurringBookingSlot(String ownerToken, String title, List<LocalDateTime> startDateTimes, List<LocalDateTime> endDateTimes, int weeksToRepeat) {
+        User owner = userRepository.findByaccessToken(ownerToken).orElseThrow(() -> new RuntimeException("User " + ownerToken + " not found."));
 
         if (startDateTimes.size() != endDateTimes.size()) {
             throw new RuntimeException("Size of start date times and end date times do not match.");
@@ -60,7 +60,7 @@ public class BookingService {
 
         BookingSlot bookingSlot = new BookingSlot(groupMeetingInstance.getOwner(), title, startDateTime, endDateTime, groupMeetingInstance);
         return bookingSlotRepository.save(bookingSlot);
-        
+
     }
 
     //Type 2
@@ -93,18 +93,20 @@ public class BookingService {
         }
     }
 
-    public List<BookingSlot> getAllOwnedSlots(String ownerEmail) {
-        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new IllegalArgumentException("User " + ownerEmail + " not found."));
+    public List<BookingSlot> getAllOwnedSlots(String ownerToken) {
+        User owner = userRepository.findByaccessToken(ownerToken).orElseThrow(() -> new RuntimeException("User " + ownerToken + " not found."));
 
         return bookingSlotRepository.findByOwner(owner);
-        
+
     }
 
-    public List<BookingSlot> getAllAvailableOwnedSlots(String ownerEmail) {
-        return getAllOwnedSlots(ownerEmail).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
+    public List<BookingSlot> getAllAvailableOwnedSlots(String ownerEmail, String userToken) {
+        userRepository.findByaccessToken(userToken).orElseThrow(() -> new RuntimeException("User " + userToken + " not found."));
+        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
+        return getAllOwnedSlots(owner.getAccessToken()).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
     }
 
-    
+
     public List<BookingSlot> getAllGroupMeetingProposalsForMeetingInstanceID(Long groupMeetingInstanceID) {
         GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new IllegalArgumentException("Group meeting instance " + groupMeetingInstanceID + " not found."));
 
@@ -112,8 +114,14 @@ public class BookingService {
     }
 
     //maybe add email service, or frontend could default open email with all the people whose bookings got cancelled in which case can return list of emails that should be notified
-    public void cancelBookingSlot(Long bookingSlotId) {
-        BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new IllegalArgumentException("Slot " + bookingSlotId + " not found."));
+    public void cancelBookingSlot(String ownerToken, Long bookingSlotId) {
+        BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
+        User owner = userRepository.findByaccessToken(ownerToken).orElseThrow(() -> new RuntimeException("Invalid Token"));
+
+        if (!bookingSlot.getOwner().equals(owner)) {
+            throw  new RuntimeException("Invalid access");
+        }
+
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.CANCELLED);
         bookingSlotRepository.save(bookingSlot);
 
@@ -128,8 +136,8 @@ public class BookingService {
 
     //BOOKING
     //For type 3
-    public Booking book(Long bookingSlotId, String reserveeEmail) {
-        User reservee = userRepository.findById(reserveeEmail).orElseThrow(() -> new RuntimeException("User " + reserveeEmail + " not found."));
+    public Booking book(Long bookingSlotId, String reserveeToken) {
+        User reservee = userRepository.findByaccessToken(reserveeToken).orElseThrow(() -> new RuntimeException("User " + reserveeToken + " not found."));
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
 
         if (!bookingSlot.getSlotStatus().equals(BookingSlot.BookingSlotStatus.AVAILABLE)) {
@@ -142,7 +150,7 @@ public class BookingService {
 
         //can never be full so still available.
         return bookingRepository.save(new Booking(bookingSlot, reservee));
-        
+
     }
 
     //Type 2
@@ -169,12 +177,17 @@ public class BookingService {
     }
 
     //whether its type 2 or type 3, either way the booking will become available when unbooked because it either had infinite space or now has at least 1 space
-    public void unbook(Long bookingId) {
+    public void unbook(Long bookingId, String reserveeToken) {
+        User reservee = userRepository.findByaccessToken(reserveeToken).orElseThrow(() -> new RuntimeException("User " + reserveeToken + " not found."));
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking " + bookingId + " not found."));
         BookingSlot bookingSlot = booking.getBookingSlot();
 
         if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.CANCELLED) {
             throw new IllegalArgumentException("Slot " + bookingSlot.getBookingSlotID() + " is cancelled, should not be calling this function.");
+        }
+
+        if (!booking.getReservee().equals(reservee)) {
+            throw new RuntimeException("Illegal Access");
         }
 
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.AVAILABLE);

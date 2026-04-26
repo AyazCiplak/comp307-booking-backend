@@ -36,15 +36,17 @@ public class AccountController {
             return ResponseEntity.badRequest().body("Invalid email or password");
         }
     }
-
-    @GetMapping("/getFreeSlotOwners")
-    public ResponseEntity<List<User>> getFreeSlotOwners() {
-        return ResponseEntity.ok(accountService.getFreeSlotOwners());
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody String token) {
+        accountService.logout(token);
+        return ResponseEntity.noContent().build();
     }
-
-
-    @GetMapping("/listBooked")          
-    public ResponseEntity<List<Booking>> listBooked(@RequestParam String email) {
-        return ResponseEntity.ok(accountService.listBooked(email));
+    @PostMapping("/getFreeSlotOwners")
+    public ResponseEntity<List<User>> getFreeSlotOwners(@RequestBody String token) {
+        return ResponseEntity.ok(accountService.getFreeSlotOwners(token));
+    }
+    @PostMapping("/listBooked")
+    public ResponseEntity<List<Booking>> listBooked(@RequestBody String token) {
+        return ResponseEntity.ok(accountService.listBooked(token));
     }
 }

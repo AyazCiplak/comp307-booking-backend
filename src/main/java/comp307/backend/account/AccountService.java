@@ -9,13 +9,14 @@ import comp307.backend.booking.Repository.BookingRepository;
 import comp307.backend.booking.Repository.BookingSlotRepository;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+//TODO all auth related runtime exception should not return the token
 @Service
 public class AccountService {
-    private final UserRepository userRepository;
+    final UserRepository userRepository;
     private final BookingSlotRepository bookingSlotRepository;
     private final BookingRepository bookingRepository;
 
@@ -24,7 +25,9 @@ public class AccountService {
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
     }
-    public ArrayList<User> getFreeSlotOwners() {
+    public ArrayList<User> getFreeSlotOwners(String token) {
+        //TODO field handle failed response
+        if (userRepository.findById(token).isEmpty()) return null;
         ArrayList<User> owners = new ArrayList<>();
 
         for (User user : userRepository.findAll()) {
@@ -50,7 +53,7 @@ public class AccountService {
 
     public User register(String email, String password) {
         if (!isRegistered(email)) {
-            User user = new User(email, password, "", "");
+            User user = new User(email, password, "", "", generateToken());
 
             userRepository.save(user);
             return user;
@@ -68,6 +71,8 @@ public class AccountService {
                 User user = userField.get();
                 // password is correct
                 if (user.getPassword().equals(password)) {
+                    // updates token on login to prevent old sessions being able to access
+                    user.updateToken(generateToken());
                     return user;
                 }
             }
@@ -76,32 +81,34 @@ public class AccountService {
         return null;
     }
 
-    public List<Booking> listBooked(String email) {
-        Optional<User> user = userRepository.findById(email);
+    public List<Booking> listBooked(String token) {
+        Optional<User> user = userRepository.findByaccessToken(token);
 
         return user.map(bookingRepository::findByReservee).orElse(null);
     }
+    public void logout(String email) {
+        Optional<User> queryResult = userRepository.findByaccessToken(email);
 
-    /*
-    Dont need to send email on backend
-    public void message(String senderEmail, String receiverEmail, String message) {
-        User sender = getUser(senderEmail);
-        User receiver = getUser(receiverEmail);
-        if (sender == null || receiver == null) return;
-
-        sendSimpleEmail(mailSender, receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
+        if (queryResult.isPresent()) {
+            User user = queryResult.get();
+            user.logout();
+        }
     }
-
-    // TODO move helper functions to somewhere better
-    public static void sendSimpleEmail(JavaMailSender mailSender, String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
-    }
-    */
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
+    }
+    private String generateToken() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+
+        // no duplicates
+        while (sb.isEmpty() || userRepository.findByaccessToken(sb.toString()).isPresent()) {
+            for (int i = 0; i < 20; i++) {
+                int index = random.nextInt(characters.length());
+                sb.append(characters.charAt(index));
+            }
+        }
+        return sb.toString();
     }
 }

@@ -1,13 +1,18 @@
 //Programmed by Mao Yurun
 package comp307.backend.account.Object;
 
+import comp307.backend.account.auth.AuthHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HexFormat;
 
 @Entity
 @Table(name = "Users")
@@ -18,7 +23,6 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-    // TODO needs to be hashed
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
@@ -38,7 +42,7 @@ public class User {
         this.firstName = nameSection.split("\\.")[0];
         this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
-        this.password = password;
+        this.password = AuthHelper.hashSHA256(password); // does not store the password at all
         this.department = department;
         this.title = title;
         this.createdAt = Timestamp.from(Instant.now());

@@ -3,6 +3,7 @@ package comp307.backend.account;
 
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
+import comp307.backend.account.auth.AuthHelper;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Repository.BookingRepository;
@@ -69,8 +70,8 @@ public class AccountService {
             // user is registered
             if (userField.isPresent()) {
                 User user = userField.get();
-                // password is correct
-                if (user.getPassword().equals(password)) {
+                // password is correct, comparing hashed values directly for better security
+                if (user.getPassword().equals(AuthHelper.hashSHA256(password))) {
                     // updates token on login to prevent old sessions being able to access
                     user.updateToken(generateToken());
                     return user;

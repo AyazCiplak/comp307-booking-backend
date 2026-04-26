@@ -29,9 +29,10 @@ public class User {
     private String title;
     @Column(nullable = false)
     private Timestamp createdAt;
-    //empty constructor for JPA
+    @Column
+    private String accessToken;
     protected User() {}
-    public User(String email, String password, String department, String title) {
+    public User(String email, String password, String department, String title, String accessToken) {
         String nameSection = email.split("@")[0];
 
         this.firstName = nameSection.split("\\.")[0];
@@ -41,6 +42,7 @@ public class User {
         this.department = department;
         this.title = title;
         this.createdAt = Timestamp.from(Instant.now());
+        this.accessToken = accessToken;
 
         isOwner = email.endsWith("@mcgill.ca");
     }
@@ -53,12 +55,9 @@ public class User {
         return lastName;
     }
 
-    // TODO should be private security wise, narrow down API for access
     public String getEmail() {
         return email;
     }
-
-    // TODO should be private security wise, narrow down API for access
     public String getPassword() {
         return password;
     }
@@ -74,6 +73,15 @@ public class User {
     }
     public Timestamp getCreatedAt() {
         return createdAt;
+    }
+    public String getAccessToken() {
+        return accessToken;
+    }
+    public void updateToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+    public void logout() {
+        this.accessToken = "";
     }
     @Override
     public boolean equals(Object newUser) {

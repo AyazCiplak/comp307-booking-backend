@@ -2,6 +2,7 @@
 
 package comp307.backend.booking.ControllerAndDTO;
 
+import comp307.backend.account.Object.DataTransferObject.EmailTokenRequest;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
@@ -25,34 +26,36 @@ public class BookingController {
 
     @PostMapping("/createRecurringBookingSlot")
     public ResponseEntity<Void> createRecurringBookingSlot(@RequestBody CreateRecurringBookingSlot request) {
-        bookingService.createRecurringBookingSlot(request.getOwnerEmail(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
+        bookingService.createRecurringBookingSlot(request.getOwnerToken(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/cancel/{bookingSlotId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingSlotId) {
-        bookingService.cancelBookingSlot(bookingSlotId);
+    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingSlotId, @RequestBody String ownerToken) {
+        bookingService.cancelBookingSlot(ownerToken, bookingSlotId);
         return ResponseEntity.noContent().build();
     }
 
+    // An user getting all available slots from an owner
     @PostMapping("/owner/getAllAvailableOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody String targetEmail) {
-        return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));
+    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody EmailTokenRequest request) {
+        return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(request.getEmail(), request.getToken()));
     }
-    
+
+    // An Owner getting all slots they opened
     @PostMapping("/owner/getAllOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestBody String targetEmail) {
-        return ResponseEntity.ok(bookingService.getAllOwnedSlots(targetEmail));
+    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getAllOwnedSlots(ownerToken));
     }
 
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
-        return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReserveeEmail()));
+        return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReserveeToken()));
     }
 
     @DeleteMapping("/{bookingSlotId}")
-    public ResponseEntity<Void> unbook(@PathVariable Long bookingSlotId) {
-        bookingService.unbook(bookingSlotId);
+    public ResponseEntity<Void> unbook(@PathVariable Long bookingSlotId, @RequestBody String reserveeToken) {
+        bookingService.unbook(bookingSlotId, reserveeToken);
         return ResponseEntity.noContent().build();
     }
     

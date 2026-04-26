@@ -9,7 +9,6 @@ import comp307.backend.booking.Service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -57,5 +56,5 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
     
-    // TODO handleDelete
+    // TODO handleDelete (or just use the cancel endpoint?)
 }

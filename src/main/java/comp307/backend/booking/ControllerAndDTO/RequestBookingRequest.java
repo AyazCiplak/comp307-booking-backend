@@ -1,7 +1,5 @@
 package comp307.backend.booking.ControllerAndDTO;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 public class RequestBookingRequest {

@@ -2,12 +2,15 @@
 package comp307.backend.booking.ControllerAndDTO;
 
 import comp307.backend.booking.Entity.Request;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import comp307.backend.booking.Service.RequestService;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("api/requests")
@@ -38,5 +41,11 @@ public class RequestController {
     @GetMapping("/getAllPendingRequests")
     public ResponseEntity<List<Request>> getAllPendingRequests(@PathVariable String ownerToken) {
         return ResponseEntity.ok(requestService.getPendingRequests(ownerToken));
+    }
+
+    @ExceptionHandler(value = NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

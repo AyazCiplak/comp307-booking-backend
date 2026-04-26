@@ -1,6 +1,7 @@
 //Programmed by Mao Yurun
 package comp307.backend.account;
 
+import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthHelper;
@@ -26,15 +27,13 @@ public class AccountService {
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
     }
+    // TODO integrate with bookings
     public ArrayList<User> getFreeSlotOwners(String token) {
-        //TODO field handle failed response
         if (userRepository.findById(token).isEmpty()) return null;
         ArrayList<User> owners = new ArrayList<>();
 
         for (User user : userRepository.findAll()) {
             if (user.isOwner()) {;
-
-                //TODO add an indicator field in bookingSlot
                 userLoop:
                 for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
                     if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
@@ -53,47 +52,44 @@ public class AccountService {
     }
 
     public User register(String email, String password) {
-        if (!isRegistered(email)) {
-            User user = new User(email, password, "", "", generateToken());
-
-            userRepository.save(user);
-            return user;
+        // email has not been used
+        if (isRegistered(email)) {
+            throw new BadRequestException(email + " has already been registered");
         }
 
-        return null;
+        User user = new User(email, password, "", "", generateToken());
+        userRepository.save(user);
+
+        return user;
     }
 
     public User login(String email, String password) {
-        if (isRegistered(email)) {
-            Optional<User> userField = userRepository.findById(email);
-
-            // user is registered
-            if (userField.isPresent()) {
-                User user = userField.get();
-                // password is correct, comparing hashed values directly for better security
-                if (user.getPassword().equals(AuthHelper.hashSHA256(password))) {
-                    // updates token on login to prevent old sessions being able to access
-                    user.updateToken(generateToken());
-                    return user;
-                }
-            }
+        // user is registered
+        if (!isRegistered(email)) {
+            throw new BadRequestException("Account Not Found");
         }
 
-        return null;
+        User user = userRepository.findById(email).get();
+
+        // password is correct, comparing hashed values directly for better security
+        if (user.getPassword().equals(AuthHelper.hashSHA256(password))) {
+            // updates token on login to prevent old sessions being able to access
+            user.updateToken(generateToken());
+            return user;
+        }
+
+        throw new BadRequestException("Incorrect Password");
     }
 
+    // TODO integrate with bookings and requests
     public List<Booking> listBooked(String token) {
         Optional<User> user = userRepository.findByaccessToken(token);
 
         return user.map(bookingRepository::findByReservee).orElse(null);
     }
-    public void logout(String email) {
-        Optional<User> queryResult = userRepository.findByaccessToken(email);
-
-        if (queryResult.isPresent()) {
-            User user = queryResult.get();
-            user.logout();
-        }
+    public void logout(String token) {
+        User user = userRepository.findByToken(token);
+        user.logout();
     }
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();

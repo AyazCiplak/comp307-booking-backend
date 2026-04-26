@@ -1,19 +1,25 @@
 //Programmed by Mao Yurun
 package comp307.backend.booking.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.booking.Entity.Request;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.stereotype.Service;
 
 import comp307.backend.booking.Repository.RequestRepository;
 
-//TODO error handling
+import javax.naming.NoPermissionException;
+
+//TODO permission tests (user shouldn't be
 @Service
 public class RequestService {
     private final UserRepository userRepository;
@@ -27,10 +33,13 @@ public class RequestService {
 
 
     public Request requestBooking(String requesterToken, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
-        User requester = userRepository.findById(requesterToken).orElseThrow(() -> new RuntimeException("User " + requesterToken + " not found."));
-        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
+        User requester = userRepository.findByToken(requesterToken);
+        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new NoSuchElementException("User " + ownerEmail + " not found"));
 
-        if (!owner.isOwner()) return null;
+        if (!owner.isOwner()) {
+            throw new BadRequestException(owner.getFirstName() + " " + owner.getLastName() + " is not an owner");
+        }
+
         Request request = new Request(requester, owner, requestedStart, requestedEnd, message);
         requestRepository.save(request);
 
@@ -38,29 +47,38 @@ public class RequestService {
     }
 
     public void setRequestState(Long requestID, String ownerToken, boolean accept) {
-        Optional<Request> request = requestRepository.findById(requestID);
-        User owner = userRepository.findByaccessToken(ownerToken).orElseThrow(() -> new RuntimeException("User " + ownerToken + " not found."));
+        Request request = requestRepository.findById(requestID).orElseThrow(() -> new NoSuchElementException("Request No." + requestID + "not found"));
+        User owner = userRepository.findByToken(ownerToken);
 
-        if (request.isPresent() && request.get().isPending() && request.get().getOwner().equals(owner)) {
-            if (accept) {
-                request.get().setStatus(true);
-                requestRepository.save(request.get());
-            } else {
-                request.get().setStatus(false);
-                requestRepository.delete(request.get());
-            }
+        if (!request.isPending()) {
+            throw new BadRequestException("Request No." + requestID +" is not pending");
+        }
+
+        if (!request.getOwner().equals(owner)) {
+            throw new BadRequestException("You are not the owner of Request No." + requestID);
+        }
+
+        if (accept) {
+            request.setStatus(true);
+        } else {
+            request.setStatus(false);
+            requestRepository.delete(request);
         }
     }
     public List<Request> getPendingRequests(String ownerToken) {
         ArrayList<Request> requests = new ArrayList<>();
-        Optional<User> owner = userRepository.findByaccessToken(ownerToken);
-        if (owner.isEmpty()) return requests;
+        User owner = userRepository.findByToken(ownerToken);
 
-        for (Request request : requestRepository.findByOwner(owner.get())) {
+        if (!owner.isOwner()) {
+            throw new BadRequestException("You are not an owner");
+        }
+
+        for (Request request : requestRepository.findByOwner(owner)) {
             if (request.isPending()) {
                 requests.add(request);
             }
         }
+
         return requests;
     }
 }

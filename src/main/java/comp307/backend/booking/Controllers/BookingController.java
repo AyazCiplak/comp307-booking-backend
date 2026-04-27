@@ -63,9 +63,9 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.markAvailabilityForProposal(request.getSlotId(), request.getReserveeEmail()));
     }
 
-    @DeleteMapping("/{bookingSlotId}")
-    public ResponseEntity<Void> unbook(@PathVariable Long bookingSlotId) {
-        bookingService.unbook(bookingSlotId);
+    @DeleteMapping("/{bookingId}")
+    public ResponseEntity<Void> unbook(@PathVariable Long bookingId) {
+        bookingService.unbook(bookingId);
         return ResponseEntity.noContent().build();
     }
     

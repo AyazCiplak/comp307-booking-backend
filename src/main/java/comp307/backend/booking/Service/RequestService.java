@@ -36,10 +36,13 @@ public class RequestService {
     }
 
     public void acceptRequest(Long requestID) {
-        Optional<Request> request = requestRepository.findById(requestID);
+        Optional<Request> optionalRequest = requestRepository.findById(requestID);
 
-        if (request.isPresent()) {
-            request.get().setStatus(true);
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+
+            request.setStatus(true);
+            requestRepository.save(request);
         }
     }
 

@@ -4,6 +4,7 @@ package comp307.backend.account;
 import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
+import comp307.backend.account.Object.DataTransferObject.UserResponse;
 import comp307.backend.account.auth.AuthHelper;
 import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.Booking;
@@ -63,25 +64,35 @@ public class AccountService {
 
         throw new BadRequestException("Incorrect Password");
     }
+
+    /**
+     * Returns all @mcgill.ca owners who have at least one AVAILABLE OFFICE_HOURS slot.
+     * Previously this always returned an empty list because owners.add(user) was never reached.
+     */
     public ArrayList<User> getFreeSlotOwners(String token) {
-        User caller = this.authService.authenticate(token);
+        this.authService.authenticate(token);
+
         ArrayList<User> owners = new ArrayList<>();
 
-
-        for (User user : userRepository.findAll().stream().filter(User::isOwner).toList()) {
-            // you shouldn't see yourself when finding people to book
-            if (user.equals(caller)) continue;
-
-            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
-                if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
+        for (User user : userRepository.findAll()) {
+            if (user.isOwner()) {
+                boolean hasAvailableSlot = bookingSlotRepository.findByOwner(user).stream()
+                        .anyMatch(slot ->
+                                slot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE
+                                && slot.getSlotType() == BookingSlot.BookingSlotType.OFFICE_HOURS
+                        );
+                if (hasAvailableSlot) {
                     owners.add(user);
-                    break;
                 }
             }
         }
 
         return owners;
     }
+
+
+
+
     public List<BookingsInterface> listBooked(String token) {
         User user = this.authService.authenticate(token);
 

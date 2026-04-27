@@ -15,6 +15,7 @@ public class UserResponse {
     private final boolean isOwner;
     private final String department;
     private final String title;
+    private final String accessToken;
 
     public UserResponse(User user) {
         this.email = user.getEmail();
@@ -23,6 +24,7 @@ public class UserResponse {
         this.isOwner = user.isOwner();
         this.department = user.getDepartment();
         this.title = user.getTitle();
+        this.accessToken = user.getAccessToken();
     }
 
     public String getEmail() { return email; }
@@ -31,4 +33,5 @@ public class UserResponse {
     public boolean isOwner() { return isOwner; }
     public String getDepartment() { return department; }
     public String getTitle() { return title; }
+    public String getAccessToken() { return accessToken; }
 }

@@ -28,8 +28,23 @@ public class AccountController {
      * Returns a safe UserResponse (no password field).
      */
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody LoginRequest combo) {
-        return ResponseEntity.ok(accountService.register(combo.getEmail(), combo.getPassword()));
+    public ResponseEntity<?> register(@RequestBody LoginRequest combo) {
+        String email = combo.getEmail();
+
+        // Enforce McGill-only registration
+        if (email == null || (!email.endsWith("@mcgill.ca") && !email.endsWith("@mail.mcgill.ca"))) {
+            return ResponseEntity.badRequest()
+                    .body("Only McGill email addresses (@mcgill.ca or @mail.mcgill.ca) may register.");
+        }
+
+        User newUser = accountService.register(email, combo.getPassword());
+
+        if (newUser != null) {
+            return ResponseEntity.ok(new UserResponse(newUser));
+        }
+        else {
+            return ResponseEntity.badRequest().body("An account with this email already exists.");
+        }
     }
 
     /**
@@ -37,18 +52,39 @@ public class AccountController {
      * Returns a safe UserResponse (no password field).
      */
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest combo) {
-        return ResponseEntity.ok(accountService.login(combo.getEmail(), combo.getPassword()));
+    public ResponseEntity<?> login(@RequestBody LoginRequest combo) {
+        User user = accountService.login(combo.getEmail(), combo.getPassword());
+
+        if (user != null) {
+            return ResponseEntity.ok(new UserResponse(user));
+        } 
+        else {
+            return ResponseEntity.badRequest().body("Invalid email or password.");
+        }
     }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody String token) {
         accountService.logout(token);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Returns all @mcgill.ca owners who have at least one available office-hours slot.
+     * Safe UserResponse list (no passwords).
+     */
     @PostMapping("/getFreeSlotOwners")
-    public ResponseEntity<List<User>> getFreeSlotOwners(@RequestBody String token) {
-        return ResponseEntity.ok(accountService.getFreeSlotOwners(token));
+    public ResponseEntity<List<UserResponse>> getFreeSlotOwners(@RequestBody String token) {
+        List<UserResponse> owners = accountService.getFreeSlotOwners(token).stream()
+                .map(UserResponse::new)
+                .toList();
+
+        return ResponseEntity.ok(owners);
     }
+
+    /**
+     * List all bookings for the given user email.
+     */
     @PostMapping("/listBooked")
     public ResponseEntity<List<BookingsInterface>> listBooked(@RequestBody String token) {
         return ResponseEntity.ok(accountService.listBooked(token));

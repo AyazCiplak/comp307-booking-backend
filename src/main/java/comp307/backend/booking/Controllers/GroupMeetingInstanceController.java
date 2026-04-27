@@ -1,11 +1,11 @@
 //Programmed by Henry Niedermayer
 
-package comp307.backend.booking.ControllerAndDTO;
+package comp307.backend.booking.Controllers;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import comp307.backend.booking.DTOs.CreateGroupMeetingInstance;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
 import comp307.backend.booking.Service.GroupMeetingInstanceService;
 
@@ -20,9 +20,12 @@ public class GroupMeetingInstanceController {
     }
 
     @GetMapping("/{id}")
-    public GroupMeetingInstance getGroupMeetingInstance(@RequestParam Long id) {
+    public GroupMeetingInstance getGroupMeetingInstance(@PathVariable Long id) {
         return groupMeetingInstanceService.getGroupMeetingInstanceByID(id);   
     }
 
-    
+    @PostMapping("/create")
+    public GroupMeetingInstance createGroupMeetingInstance(@RequestBody CreateGroupMeetingInstance request) {
+        return groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerEmail(), request.getName(), request.getMaxUsers(), request.getInviteToken());
+    }
 }

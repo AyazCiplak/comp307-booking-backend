@@ -1,4 +1,4 @@
-package comp307.backend.booking.ControllerAndDTO;
+package comp307.backend.booking.DTOs;
 
 import java.time.LocalDateTime;
 

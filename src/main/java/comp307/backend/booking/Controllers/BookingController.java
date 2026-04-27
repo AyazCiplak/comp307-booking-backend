@@ -1,7 +1,10 @@
 //Programmed by Henry Niedermayer and Mao Yurun
 
-package comp307.backend.booking.ControllerAndDTO;
+package comp307.backend.booking.Controllers;
 
+import comp307.backend.booking.DTOs.CreateBookingRequest;
+import comp307.backend.booking.DTOs.CreateGroupMeetingProposalSlot;
+import comp307.backend.booking.DTOs.CreateRecurringBookingSlot;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;

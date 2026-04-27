@@ -1,6 +1,6 @@
 //Programmed by Henry Niedermayer
 
-package comp307.backend.booking.ControllerAndDTO;
+package comp307.backend.booking.DTOs;
 
 public class CreateBookingRequest {
     private Long bookingSlotID;

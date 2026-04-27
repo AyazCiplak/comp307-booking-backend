@@ -1,6 +1,7 @@
 //Programmed by Henry Niedermayer and Mao Yurun
-package comp307.backend.booking.ControllerAndDTO;
+package comp307.backend.booking.Controllers;
 
+import comp307.backend.booking.DTOs.RequestBookingRequest;
 import comp307.backend.booking.Entity.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

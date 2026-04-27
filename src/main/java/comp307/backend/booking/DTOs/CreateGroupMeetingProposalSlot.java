@@ -1,4 +1,6 @@
-package comp307.backend.booking.ControllerAndDTO;
+//Programmed by Henry Niedermayer
+
+package comp307.backend.booking.DTOs;
 
 import java.time.LocalDateTime;
 

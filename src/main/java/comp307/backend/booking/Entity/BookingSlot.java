@@ -19,7 +19,7 @@ public class BookingSlot {
 
     //Only for Type 2 (group meeting)
     @ManyToOne
-    @JoinColumn(name = "sequenceID")
+    @JoinColumn(name = "groupMeetingInstanceID")
     private GroupMeetingInstance groupMeetingInstance;
 
     @Enumerated(EnumType.STRING)

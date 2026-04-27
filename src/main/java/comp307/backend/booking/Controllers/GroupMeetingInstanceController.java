@@ -25,9 +25,9 @@ public class GroupMeetingInstanceController {
         return ResponseEntity.ok(groupMeetingInstanceService.getGroupMeetingInstanceByID(id));   
     }
 
-    @GetMapping("/invite/{inviteToken}")
-    public ResponseEntity<GroupMeetingInstance> getGroupMeetingInstanceByInviteToken(@PathVariable String inviteToken) {
-        return ResponseEntity.ok(groupMeetingInstanceService.getGroupMeetingInstanceByInviteToken(inviteToken));
+    @GetMapping("/inviteToken")
+    public ResponseEntity<GroupMeetingInstance> getGroupMeetingInstanceByInviteToken(@RequestParam String invite) {
+        return ResponseEntity.ok(groupMeetingInstanceService.getGroupMeetingInstanceByInviteToken(invite));
     }
 
     @PostMapping("/create")

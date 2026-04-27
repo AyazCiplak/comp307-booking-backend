@@ -4,6 +4,7 @@ package comp307.backend.account;
 import comp307.backend.account.Object.DataTransferObject.LoginRequest;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.Booking;
+import comp307.backend.booking.Entity.BookingsInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getFreeSlotOwners(token));
     }
     @PostMapping("/listBooked")
-    public ResponseEntity<List<Booking>> listBooked(@RequestBody String token) {
+    public ResponseEntity<List<BookingsInterface>> listBooked(@RequestBody String token) {
         return ResponseEntity.ok(accountService.listBooked(token));
     }
 

@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "BookingSlots")
-public class BookingSlot {
+public class BookingSlot implements BookingsInterface {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long bookingSlotID;

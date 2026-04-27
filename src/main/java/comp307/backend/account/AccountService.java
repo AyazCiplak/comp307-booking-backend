@@ -7,8 +7,11 @@ import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthHelper;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
+import comp307.backend.booking.Entity.BookingsInterface;
+import comp307.backend.booking.Entity.Request;
 import comp307.backend.booking.Repository.BookingRepository;
 import comp307.backend.booking.Repository.BookingSlotRepository;
+import comp307.backend.booking.Repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -20,32 +23,13 @@ public class AccountService {
     final UserRepository userRepository;
     private final BookingSlotRepository bookingSlotRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
 
-    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository) {
+    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, RequestRepository requestRepository) {
         this.userRepository = userRepository;
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
-    }
-    // TODO integrate with bookings
-    public ArrayList<User> getFreeSlotOwners(String token) {
-        if (userRepository.findById(token).isEmpty()) return null;
-        ArrayList<User> owners = new ArrayList<>();
-
-        for (User user : userRepository.findAll().stream().filter(User::isOwner).toList()) {
-            userLoop:
-            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
-                if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
-                    for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
-                        if (booking.getReservee() == null) {
-
-                            break userLoop;
-                        }
-                    }
-                }
-            }
-        }
-
-        return owners;
+        this.requestRepository = requestRepository;
     }
 
     public User register(String email, String password) {
@@ -77,12 +61,39 @@ public class AccountService {
 
         throw new BadRequestException("Incorrect Password");
     }
+    public ArrayList<User> getFreeSlotOwners(String token) {
+        User caller = userRepository.findByToken(token);
+        ArrayList<User> owners = new ArrayList<>();
 
-    // TODO integrate with bookings and requests
-    public List<Booking> listBooked(String token) {
-        Optional<User> user = userRepository.findByaccessToken(token);
 
-        return user.map(bookingRepository::findByReservee).orElse(null);
+        for (User user : userRepository.findAll().stream().filter(User::isOwner).toList()) {
+            // you shouldn't see yourself when finding people to book
+            if (user.equals(caller)) continue;
+
+            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
+                if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
+                    owners.add(user);
+                    break;
+                }
+            }
+        }
+
+        return owners;
+    }
+    public List<BookingsInterface> listBooked(String token) {
+        User user = userRepository.findByToken(token);
+
+        ArrayList<BookingsInterface> bookings = new ArrayList<>();
+        bookings.addAll(requestRepository.findByRequester(user));
+
+        for (Booking booking : bookingRepository.findByReservee(user)) {
+            BookingSlot bookingSlot = booking.getBookingSlot();
+            if (bookingSlot.getSlotStatus() != BookingSlot.BookingSlotStatus.CANCELLED) {
+                bookings.add(bookingSlot);
+            }
+        }
+
+        return bookings;
     }
     public void logout(String token) {
         User user = userRepository.findByToken(token);

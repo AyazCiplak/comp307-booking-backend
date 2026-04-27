@@ -42,7 +42,7 @@ public class User {
         this.firstName = nameSection.split("\\.")[0];
         this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
-        this.password = AuthHelper.hashSHA256(password); // does not store the password at all
+        this.password = AuthHelper.hashSHA256(password); // does not store the raw password at all
         this.department = department;
         this.title = title;
         this.createdAt = Timestamp.from(Instant.now());

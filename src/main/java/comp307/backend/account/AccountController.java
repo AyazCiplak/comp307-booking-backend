@@ -2,6 +2,7 @@
 package comp307.backend.account;
 
 import comp307.backend.account.Object.DataTransferObject.LoginRequest;
+import comp307.backend.account.Object.DataTransferObject.UserResponse;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.BookingsInterface;
 import org.springframework.http.HttpStatus;
@@ -11,19 +12,30 @@ import org.springframework.web.bind.annotation.*;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
+
 @RestController
 @RequestMapping("api/account")
 public class AccountController {
     private final AccountService accountService;
+
     public AccountController(AccountService service) {
         this.accountService = service;
     }
 
+    /**
+     * Register a new user.
+     * Only @mcgill.ca and @mail.mcgill.ca addresses are accepted.
+     * Returns a safe UserResponse (no password field).
+     */
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody LoginRequest combo) {
         return ResponseEntity.ok(accountService.register(combo.getEmail(), combo.getPassword()));
     }
 
+    /**
+     * Log in an existing user.
+     * Returns a safe UserResponse (no password field).
+     */
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest combo) {
         return ResponseEntity.ok(accountService.login(combo.getEmail(), combo.getPassword()));

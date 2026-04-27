@@ -17,6 +17,8 @@ public class RequestBookingRequest {
         this.message = message;
     }
 
+    public RequestBookingRequest() {}
+
     public String getRequesterToken() {
         return requesterToken;
     }

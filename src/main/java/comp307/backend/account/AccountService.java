@@ -4,7 +4,6 @@ package comp307.backend.account;
 import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
-import comp307.backend.account.Object.DataTransferObject.UserResponse;
 import comp307.backend.account.auth.AuthHelper;
 import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.Booking;

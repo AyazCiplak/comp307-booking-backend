@@ -7,12 +7,17 @@ import java.util.List;
 
 public class CreateRecurringBookingSlot {
     private String ownerEmail;
+    private String title;
     private List<LocalDateTime> startDateTimes;
     private List<LocalDateTime> endDateTimes;
     private int weeksToRepeat;
 
     public String getOwnerEmail() {
         return this.ownerEmail;
+    }
+
+    public String getTitle() {
+        return this.title;
     }
 
     public List<LocalDateTime> getStartDateTimes() {

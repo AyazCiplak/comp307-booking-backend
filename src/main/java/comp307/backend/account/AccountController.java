@@ -37,15 +37,14 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/getFreeSlotOwners")
+    @GetMapping("/getFreeSlotOwners")
     public ResponseEntity<List<User>> getFreeSlotOwners() {
         return ResponseEntity.ok(accountService.getFreeSlotOwners());
     }
 
 
-
-    @PostMapping("/listBooked")
-    public ResponseEntity<List<Booking>> listBooked(@RequestBody String email) {
+    @GetMapping("/listBooked")          
+    public ResponseEntity<List<Booking>> listBooked(@RequestParam String email) {
         return ResponseEntity.ok(accountService.listBooked(email));
     }
 }

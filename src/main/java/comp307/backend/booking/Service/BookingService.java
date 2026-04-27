@@ -36,7 +36,7 @@ public class BookingService {
     //Type 3
     //startDateTimes/endDateTimes are not to be confused with listing all the weeks. Instead, they list the first weeks time slots. For example Monday Jan 1st 2/3 pm and Tuesday Jan 2nd 3/4 pm. 
     //From this we use weeksToRepeat to loop and make booking slots for the future weeks.
-    public void createRecurringBookingSlot(String ownerEmail, List<LocalDateTime> startDateTimes, List<LocalDateTime> endDateTimes, int weeksToRepeat) {
+    public void createRecurringBookingSlot(String ownerEmail, String title, List<LocalDateTime> startDateTimes, List<LocalDateTime> endDateTimes, int weeksToRepeat) {
         User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
 
         if (startDateTimes.size() != endDateTimes.size()) {
@@ -48,7 +48,7 @@ public class BookingService {
                 LocalDateTime startDateTime = startDateTimes.get(j).plusWeeks(i);
                 LocalDateTime endDateTime = endDateTimes.get(j).plusWeeks(i);
 
-                bookingSlotRepository.save(new BookingSlot(owner, startDateTime, endDateTime));
+                bookingSlotRepository.save(new BookingSlot(owner, title, startDateTime, endDateTime));
             }
         }
     }

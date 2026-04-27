@@ -26,7 +26,6 @@ public class BookingSlot {
     @Column(nullable = false)
     private BookingSlotType type;
 
-    //look into how this should be set, maybe at constructor in which case not nullable or maybe by a setter
     private String title;
 
     @Column(nullable = false)
@@ -50,9 +49,10 @@ public class BookingSlot {
     protected BookingSlot() {}
 
     //Type 3 constructor
-    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public BookingSlot(User owner, String title, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.owner = owner;
         this.type = BookingSlotType.OFFICE_HOURS;
+        this.title = title;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }

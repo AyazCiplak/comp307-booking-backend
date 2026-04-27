@@ -28,7 +28,7 @@ public class BookingController {
 
     @PostMapping("/createRecurringBookingSlot")
     public ResponseEntity<Void> createRecurringBookingSlot(@RequestBody CreateRecurringBookingSlot request) {
-        bookingService.createRecurringBookingSlot(request.getOwnerEmail(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
+        bookingService.createRecurringBookingSlot(request.getOwnerEmail(), request.getTitle(), request.getStartDateTimes(), request.getEndDateTimes(), request.getWeeksToRepeat());
         return ResponseEntity.noContent().build();
     }
 
@@ -49,13 +49,13 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/owner/getAllAvailableOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody String targetEmail) {
+    @GetMapping("/owner/getAllAvailableOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestParam String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));
     }
     
-    @PostMapping("/owner/getAllOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestBody String targetEmail) {
+    @GetMapping("/owner/getAllOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestParam String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllOwnedSlots(targetEmail));
     }
 

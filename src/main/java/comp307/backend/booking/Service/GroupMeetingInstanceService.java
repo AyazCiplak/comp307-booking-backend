@@ -2,6 +2,8 @@
 
 package comp307.backend.booking.Service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import comp307.backend.account.Object.User;
@@ -30,5 +32,17 @@ public class GroupMeetingInstanceService {
 
         GroupMeetingInstance groupMeetingInstance = new GroupMeetingInstance(owner, name, maxUsers, inviteToken); 
         return groupMeetingInstanceRepository.save(groupMeetingInstance);
+    }
+
+
+    //For getting the group meeting instance when a user clicks the invite link
+    public GroupMeetingInstance getGroupMeetingInstanceByInviteToken(String inviteToken) {
+        List<GroupMeetingInstance> groupMeetingInstances = groupMeetingInstanceRepository.findByInviteToken(inviteToken);
+
+        if (groupMeetingInstances.size() != 1) {
+            throw new RuntimeException("Should be exactly one group meeting instance with invite token " + inviteToken + " but found " + groupMeetingInstances.size());
+        }
+
+        return groupMeetingInstances.get(0);
     }
 }

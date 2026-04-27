@@ -49,6 +49,11 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/getAllGroupMeetingProposalsForMeetingInstanceID/{groupMeetingInstanceID}")
+    public ResponseEntity<List<BookingSlot>> getAllGroupMeetingProposalsForMeetingInstanceID(@PathVariable Long groupMeetingInstanceID) {
+        return ResponseEntity.ok(bookingService.getAllGroupMeetingProposalsForMeetingInstanceID(groupMeetingInstanceID));
+    }
+
     @GetMapping("/owner/getAllAvailableOwnedSlots")
     public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestParam String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));

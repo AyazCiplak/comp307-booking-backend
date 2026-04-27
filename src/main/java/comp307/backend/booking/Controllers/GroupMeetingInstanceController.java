@@ -2,6 +2,7 @@
 
 package comp307.backend.booking.Controllers;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -20,12 +21,18 @@ public class GroupMeetingInstanceController {
     }
 
     @GetMapping("/{id}")
-    public GroupMeetingInstance getGroupMeetingInstance(@PathVariable Long id) {
-        return groupMeetingInstanceService.getGroupMeetingInstanceByID(id);   
+    public ResponseEntity<GroupMeetingInstance> getGroupMeetingInstance(@PathVariable Long id) {
+        return ResponseEntity.ok(groupMeetingInstanceService.getGroupMeetingInstanceByID(id));   
+    }
+
+    @GetMapping("/invite/{inviteToken}")
+    public ResponseEntity<GroupMeetingInstance> getGroupMeetingInstanceByInviteToken(@PathVariable String inviteToken) {
+        return ResponseEntity.ok(groupMeetingInstanceService.getGroupMeetingInstanceByInviteToken(inviteToken));
     }
 
     @PostMapping("/create")
-    public GroupMeetingInstance createGroupMeetingInstance(@RequestBody CreateGroupMeetingInstance request) {
-        return groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerEmail(), request.getName(), request.getMaxUsers(), request.getInviteToken());
+    public ResponseEntity<GroupMeetingInstance> createGroupMeetingInstance(@RequestBody CreateGroupMeetingInstance request) {
+        GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerEmail(), request.getName(), request.getMaxUsers(), request.getInviteToken());
+        return ResponseEntity.ok(groupMeetingInstance);
     }
 }

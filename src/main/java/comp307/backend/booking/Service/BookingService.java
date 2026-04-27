@@ -104,6 +104,13 @@ public class BookingService {
         return getAllOwnedSlots(ownerEmail).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
     }
 
+    
+    public List<BookingSlot> getAllGroupMeetingProposalsForMeetingInstanceID(Long groupMeetingInstanceID) {
+        GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new IllegalArgumentException("Group meeting instance " + groupMeetingInstanceID + " not found."));
+
+        return bookingSlotRepository.findByGroupMeetingInstanceAndSlotType(groupMeetingInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+    }
+
     //maybe add email service, or frontend could default open email with all the people whose bookings got cancelled in which case can return list of emails that should be notified
     public void cancelBookingSlot(Long bookingSlotId) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new IllegalArgumentException("Slot " + bookingSlotId + " not found."));

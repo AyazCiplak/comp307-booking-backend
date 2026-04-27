@@ -8,15 +8,18 @@ import org.springframework.stereotype.Service;
 
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
+import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
 import comp307.backend.booking.Repository.GroupMeetingInstanceRepository;
 
 @Service
 public class GroupMeetingInstanceService {
+    private final AuthService authService;
     private final GroupMeetingInstanceRepository groupMeetingInstanceRepository;
     private final UserRepository userRepository;
 
-    public GroupMeetingInstanceService(GroupMeetingInstanceRepository groupMeetingInstanceRepository, UserRepository userRepository) {
+    public GroupMeetingInstanceService(AuthService authService, GroupMeetingInstanceRepository groupMeetingInstanceRepository, UserRepository userRepository) {
+        this.authService = authService;
         this.groupMeetingInstanceRepository = groupMeetingInstanceRepository;
         this.userRepository = userRepository;
     }
@@ -27,8 +30,8 @@ public class GroupMeetingInstanceService {
     }
 
 
-    public GroupMeetingInstance createGroupMeetingInstance(String ownerEmail, String name, int maxUsers, String inviteToken) {
-        User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new RuntimeException("User " + ownerEmail + " not found."));
+    public GroupMeetingInstance createGroupMeetingInstance(String ownerToken, String name, int maxUsers, String inviteToken) {
+        User owner = authService.authenticate(ownerToken);
 
         GroupMeetingInstance groupMeetingInstance = new GroupMeetingInstance(owner, name, maxUsers, inviteToken); 
         return groupMeetingInstanceRepository.save(groupMeetingInstance);

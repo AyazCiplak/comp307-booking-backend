@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 
-// TODO handle failures to process from calls
 //For booking and booking slots (Type 2 and 3 only)
 @RestController
 @RequestMapping("api/booking")

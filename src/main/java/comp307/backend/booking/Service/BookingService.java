@@ -78,6 +78,7 @@ public class BookingService {
         BookingSlot selectedBookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new NoSuchElementException("Slot " + bookingSlotId + " not found."));
         User owner = userRepository.findByToken(ownerToken);
 
+
         if (selectedBookingSlot.getSlotType() != BookingSlot.BookingSlotType.GROUP_PROPOSAL) {
             throw new IllegalArgumentException("Slot " + bookingSlotId + " is not a group meeting proposal slot.");
         }
@@ -116,7 +117,6 @@ public class BookingService {
         return bookingSlotRepository.findByOwner(owner);
 
     }
-    // TODO should include type 3 as well
     public List<BookingSlot> getAllAvailableOwnedSlots(String ownerEmail, String userToken) {
         userRepository.findByToken(userToken);
         User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new NoSuchElementException("User " + ownerEmail + " not found."));
@@ -169,6 +169,10 @@ public class BookingService {
             throw new IllegalArgumentException("Slot " + bookingSlotId + " is not an office hours slot.");
         }
 
+        if (bookingSlot.getOwner().equals(reservee)) {
+            throw new IllegalArgumentException("You should not be booking your own slot");
+        }
+
         //can never be full so still available.
         return bookingRepository.save(new Booking(bookingSlot, reservee));
 
@@ -187,6 +191,10 @@ public class BookingService {
             throw new IllegalArgumentException("Slot " + bookingSlotId + " is not available for marking availability.");
         }
 
+        if (bookingSlot.getOwner().equals(reservee)) {
+            throw new IllegalArgumentException("You should not be booking your own slot");
+        }
+
         int currentBookingsCount = bookingRepository.findByBookingSlot(bookingSlot).size();
         if (currentBookingsCount + 1 == bookingSlot.getMaxUsers()) {
             bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.BOOKED);
@@ -202,6 +210,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NoSuchElementException("Booking " + bookingId + " not found."));
         BookingSlot bookingSlot = booking.getBookingSlot();
 
+        // No self check as it would't exist in the first place
         if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.CANCELLED) {
             throw new IllegalArgumentException("Slot " + bookingSlot.getBookingSlotID() + " is cancelled, should not be calling this function.");
         }

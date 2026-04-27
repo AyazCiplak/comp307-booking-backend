@@ -30,10 +30,13 @@ public class RequestService {
         this.requestRepository = requestRepository;
     }
 
-
     public Request requestBooking(String requesterToken, String ownerEmail, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
         User requester = userRepository.findByToken(requesterToken);
         User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new NoSuchElementException("User " + ownerEmail + " not found"));
+
+        if (owner.equals(requester)) {
+            throw new IllegalArgumentException("You should not send a request to yourself");
+        }
 
         if (!owner.isOwner()) {
             throw new BadRequestException(owner.getFirstName() + " " + owner.getLastName() + " is not an owner");

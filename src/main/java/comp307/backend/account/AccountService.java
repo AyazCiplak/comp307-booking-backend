@@ -31,16 +31,14 @@ public class AccountService {
         if (userRepository.findById(token).isEmpty()) return null;
         ArrayList<User> owners = new ArrayList<>();
 
-        for (User user : userRepository.findAll()) {
-            if (user.isOwner()) {;
-                userLoop:
-                for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
-                    if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
-                        for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
-                            if (booking.getReservee() == null) {
+        for (User user : userRepository.findAll().stream().filter(User::isOwner).toList()) {
+            userLoop:
+            for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
+                if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
+                    for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
+                        if (booking.getReservee() == null) {
 
-                                break userLoop;
-                            }
+                            break userLoop;
                         }
                     }
                 }

@@ -144,6 +144,7 @@ public class BookingService {
     }
 
     //maybe add email service, or frontend could default open email with all the people whose bookings got cancelled in which case can return list of emails that should be notified
+    @Transactional
     public void cancelBookingSlot(String ownerToken, Long bookingSlotId) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new NoSuchElementException("Slot " + bookingSlotId + " not found."));
         User owner = this.authService.authenticate(ownerToken);

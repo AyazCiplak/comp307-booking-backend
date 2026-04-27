@@ -40,10 +40,7 @@ public class RequestService {
             throw new BadRequestException(owner.getFirstName() + " " + owner.getLastName() + " is not an owner");
         }
 
-        Request request = new Request(requester, owner, requestedStart, requestedEnd, message);
-        requestRepository.save(request);
-
-        return request;
+        return requestRepository.save(new Request(requester, owner, requestedStart, requestedEnd, message));
     }
 
     public void setRequestState(Long requestID, String ownerToken, boolean accept) {

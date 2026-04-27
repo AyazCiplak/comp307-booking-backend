@@ -2,7 +2,8 @@
 package comp307.backend.account;
 
 import comp307.backend.account.Object.DataTransferObject.LoginRequest;
-import comp307.backend.account.Object.DataTransferObject.UserResponse;
+import comp307.backend.account.Object.DataTransferObject.UserInformation;
+import comp307.backend.account.Object.DataTransferObject.LoggedInResponse;
 import comp307.backend.account.Object.User;
 import comp307.backend.booking.Entity.BookingsInterface;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class AccountController {
     /**
      * Register a new user.
      * Only @mcgill.ca and @mail.mcgill.ca addresses are accepted.
-     * Returns a safe UserResponse (no password field).
+     * Returns a safe LoggedInResponse (no password field).
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody LoginRequest combo) {
@@ -38,17 +39,17 @@ public class AccountController {
         }
 
         User newUser = accountService.register(email, combo.getPassword());
-        return ResponseEntity.ok(new UserResponse(newUser));
+        return ResponseEntity.ok(new LoggedInResponse(newUser));
     }
 
     /**
      * Log in an existing user.
-     * Returns a safe UserResponse (no password field).
+     * Returns a safe LoggedInResponse (no password field).
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest combo) {
         User user = accountService.login(combo.getEmail(), combo.getPassword());
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(new LoggedInResponse(user));
     }
 
     @PostMapping("/logout")
@@ -59,12 +60,12 @@ public class AccountController {
 
     /**
      * Returns all @mcgill.ca owners who have at least one available office-hours slot.
-     * Safe UserResponse list (no passwords).
+     * Safe UserInformation list (no passwords or access tokens).
      */
     @PostMapping("/getFreeSlotOwners")
-    public ResponseEntity<List<UserResponse>> getFreeSlotOwners(@RequestBody String token) {
-        List<UserResponse> owners = accountService.getFreeSlotOwners(token).stream()
-                .map(UserResponse::new)
+    public ResponseEntity<List<UserInformation>> getFreeSlotOwners(@RequestBody String token) {
+        List<UserInformation> owners = accountService.getFreeSlotOwners(token).stream()
+                .map(UserInformation::new)
                 .toList();
 
         return ResponseEntity.ok(owners);

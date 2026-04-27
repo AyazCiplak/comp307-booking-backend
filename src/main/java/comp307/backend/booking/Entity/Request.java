@@ -39,18 +39,6 @@ public class Request implements BookingsInterface {
     private Timestamp updatedAt;
     public Request() {}
 
-    public Request(long id, User requester, User owner, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message, RequestStatus status, Timestamp createdAt, Timestamp updatedAt) {
-        this.id = id;
-        this.requester = requester;
-        this.owner = owner;
-        this.requestedStart = requestedStart;
-        this.requestedEnd = requestedEnd;
-        this.message = message;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
     public Request(User requester, User owner, LocalDateTime requestedStart, LocalDateTime requestedEnd, String message) {
         this.requester = requester;
         this.owner = owner;
@@ -61,6 +49,7 @@ public class Request implements BookingsInterface {
         this.createdAt = Timestamp.from(Instant.now());
         this.updatedAt = this.createdAt;
     }
+    
     public long getId() {
         return id;
     }

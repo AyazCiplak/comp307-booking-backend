@@ -8,7 +8,7 @@ import comp307.backend.account.Object.User;
  * Never includes the password field — the full User entity must not
  * be serialised directly to the client.
  */
-public class UserResponse {
+public class LoggedInResponse {
     private final String email;
     private final String firstName;
     private final String lastName;
@@ -17,7 +17,7 @@ public class UserResponse {
     private final String title;
     private final String accessToken;
 
-    public UserResponse(User user) {
+    public LoggedInResponse(User user) {
         this.email = user.getEmail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

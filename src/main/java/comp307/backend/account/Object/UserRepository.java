@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
-    Optional<User> findByaccessToken(String accessToken);
+public interface UserRepository extends JpaRepository<User, String> {
+    Optional<User> findByAccessToken(String accessToken);
 }
 

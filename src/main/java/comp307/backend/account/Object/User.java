@@ -7,12 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.HexFormat;
 
 @Entity
 @Table(name = "Users")
@@ -33,9 +29,12 @@ public class User {
     private String title;
     @Column(nullable = false)
     private Timestamp createdAt;
-    @Column
+    
+    @Column(unique = true)
     private String accessToken;
+
     protected User() {}
+
     public User(String email, String password, String department, String title, String accessToken) {
         String nameSection = email.split("@")[0];
 

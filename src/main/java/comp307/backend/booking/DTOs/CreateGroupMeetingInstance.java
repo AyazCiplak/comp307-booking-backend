@@ -1,3 +1,5 @@
+//Programmed by Henry Niedermayer
+
 package comp307.backend.booking.DTOs;
 
 public class CreateGroupMeetingInstance {

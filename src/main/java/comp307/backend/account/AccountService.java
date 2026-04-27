@@ -1,14 +1,14 @@
-//Programmed by Mao Yurun
+//Programmed by Mao Yurun and Henry Niedermayer
 package comp307.backend.account;
 
 import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthHelper;
+import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Entity.BookingsInterface;
-import comp307.backend.booking.Entity.Request;
 import comp307.backend.booking.Repository.BookingRepository;
 import comp307.backend.booking.Repository.BookingSlotRepository;
 import comp307.backend.booking.Repository.RequestRepository;
@@ -17,15 +17,17 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 @Service
 public class AccountService {
-    final UserRepository userRepository;
+    private final AuthService authService;
+    private final UserRepository userRepository;
     private final BookingSlotRepository bookingSlotRepository;
     private final BookingRepository bookingRepository;
     private final RequestRepository requestRepository;
 
-    public AccountService(UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, RequestRepository requestRepository) {
+    public AccountService(AuthService authService, UserRepository userRepository, BookingSlotRepository bookingSlotRepository, BookingRepository bookingRepository, RequestRepository requestRepository) {
+        this.authService = authService;
         this.userRepository = userRepository;
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
@@ -62,7 +64,7 @@ public class AccountService {
         throw new BadRequestException("Incorrect Password");
     }
     public ArrayList<User> getFreeSlotOwners(String token) {
-        User caller = userRepository.findByToken(token);
+        User caller = this.authService.authenticate(token);
         ArrayList<User> owners = new ArrayList<>();
 
 
@@ -81,7 +83,7 @@ public class AccountService {
         return owners;
     }
     public List<BookingsInterface> listBooked(String token) {
-        User user = userRepository.findByToken(token);
+        User user = this.authService.authenticate(token);
 
         ArrayList<BookingsInterface> bookings = new ArrayList<>();
         bookings.addAll(requestRepository.findByRequester(user));
@@ -96,19 +98,22 @@ public class AccountService {
         return bookings;
     }
     public void logout(String token) {
-        User user = userRepository.findByToken(token);
+        User user = this.authService.authenticate(token);
         user.logout();
+        userRepository.save(user);
     }
+
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
     }
+    
     private String generateToken() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder sb = new StringBuilder();
         SecureRandom random = new SecureRandom();
 
         // no duplicates
-        while (sb.isEmpty() || userRepository.findByaccessToken(sb.toString()).isPresent()) {
+        while (sb.isEmpty() || userRepository.findByAccessToken(sb.toString()).isPresent()) {
             for (int i = 0; i < 20; i++) {
                 int index = random.nextInt(characters.length());
                 sb.append(characters.charAt(index));

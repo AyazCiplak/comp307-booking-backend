@@ -2,7 +2,6 @@
 
 package comp307.backend.booking.ControllerAndDTO;
 
-import comp307.backend.account.AccountController;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Service.BookingService;
@@ -18,12 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
-    private final AccountController accountController;
     private final BookingService bookingService;
 
-    public BookingController(BookingService bookingService, AccountController accountController) {
+    public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
-        this.accountController = accountController;
     }
 
     @PostMapping("/createRecurringBookingSlot")
@@ -34,7 +31,7 @@ public class BookingController {
 
     @PostMapping("/createGroupMeetingBookingProposalSlot")
     public ResponseEntity<BookingSlot> createGroupMeetingBookingProposalSlot(@RequestBody CreateGroupMeetingProposalSlot request) {
-        return ResponseEntity.ok(bookingService.createGroupMeetingBookingProposalSlot(request.getGroupMeetingInstanceID(), request.getStartDateTime(), request.getEndDateTime()));
+        return ResponseEntity.ok(bookingService.createGroupMeetingBookingProposalSlot(request.getGroupMeetingInstanceID(), request.getTitle(), request.getStartDateTime(), request.getEndDateTime()));
     }
 
     @PatchMapping("/cancel/{bookingSlotId}")

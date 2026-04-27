@@ -10,6 +10,7 @@ import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
 import comp307.backend.booking.Repository.*;
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,12 +55,42 @@ public class BookingService {
 
     //Type 2
     //Already enforced on front end that there can't be overlapping groups or end date earlier than start date etc.
-    public BookingSlot createGroupMeetingBookingProposalSlot(Long groupMeetingInstanceID, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public BookingSlot createGroupMeetingBookingProposalSlot(Long groupMeetingInstanceID, String title, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new RuntimeException("Group meeting instance " + groupMeetingInstanceID + " not found."));
 
-        BookingSlot bookingSlot = new BookingSlot(groupMeetingInstance.getOwner(), startDateTime, endDateTime, groupMeetingInstance);
+        BookingSlot bookingSlot = new BookingSlot(groupMeetingInstance.getOwner(), title, startDateTime, endDateTime, groupMeetingInstance);
         return bookingSlotRepository.save(bookingSlot);
         
+    }
+
+    //Type 2
+    //Selects one proposal slot, deletes the others and their bookings (availability markings)
+    @Transactional
+    public void selectGroupMeetingProposalSlot(Long bookingSlotId) {
+        BookingSlot selectedBookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
+
+        if (selectedBookingSlot.getSlotType() != BookingSlot.BookingSlotType.GROUP_PROPOSAL) {
+            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not a group meeting proposal slot.");
+        }
+
+        if (selectedBookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.CANCELLED) {
+            throw new IllegalArgumentException("Slot " + bookingSlotId + " was cancelled.");
+        }
+
+        selectedBookingSlot.markAsSelected();
+        bookingSlotRepository.save(selectedBookingSlot);
+
+        List<BookingSlot> otherUnselectedProposals = bookingSlotRepository.findByGroupMeetingInstanceAndSlotType(selectedBookingSlot.getGroupMeetingInstance(), BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+
+        for (BookingSlot otherProposal : otherUnselectedProposals) {
+            List<Booking> unusedBookings = bookingRepository.findByBookingSlot(otherProposal);
+
+            for (Booking booking : unusedBookings) {
+                bookingRepository.delete(booking);
+            }
+
+            bookingSlotRepository.delete(otherProposal);
+        }
     }
 
     public List<BookingSlot> getAllOwnedSlots(String ownerEmail) {

@@ -58,9 +58,10 @@ public class BookingSlot {
     }
 
     //Type 2 proposal constructor
-    public BookingSlot(User owner, LocalDateTime startDateTime, LocalDateTime endDateTime, GroupMeetingInstance groupMeetingInstance) {
+    public BookingSlot(User owner, String title, LocalDateTime startDateTime, LocalDateTime endDateTime, GroupMeetingInstance groupMeetingInstance) {
         this.owner = owner;
         this.type = BookingSlotType.GROUP_PROPOSAL;
+        this.title = title;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.groupMeetingInstance = groupMeetingInstance;
@@ -75,6 +76,10 @@ public class BookingSlot {
     public User getOwner()
     {
         return this.owner;
+    }
+
+    public String getTitle() {
+        return this.title;
     }
 
     public BookingSlotType getSlotType() {
@@ -93,7 +98,7 @@ public class BookingSlot {
         return this.slotStatus;
     }
     
-    public GroupMeetingInstance getSequence() {
+    public GroupMeetingInstance getGroupMeetingInstance() {
         return this.groupMeetingInstance;
     }
 
@@ -119,6 +124,12 @@ public class BookingSlot {
         this.updatedAt = LocalDateTime.now();
     }
 
+    //look into this is needed
+    public void setTitle(String title) {
+        this.title = title;
+        this.updatedAt = LocalDateTime.now();
+    }
+
 
 
 
@@ -130,7 +141,7 @@ public class BookingSlot {
 
     public enum BookingSlotStatus {
         AVAILABLE, //means there's space
-        BOOKED, //no space
+        BOOKED, //no space, only used for Type 2 since Type 3 can never be full
         CANCELLED
     }
 }

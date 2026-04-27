@@ -24,23 +24,23 @@ public class AccountService {
         this.bookingSlotRepository = bookingSlotRepository;
         this.bookingRepository = bookingRepository;
     }
+
+    /**
+     * Returns all @mcgill.ca owners who have at least one AVAILABLE OFFICE_HOURS slot.
+     * Previously this always returned an empty list because owners.add(user) was never reached.
+     */
     public ArrayList<User> getFreeSlotOwners() {
         ArrayList<User> owners = new ArrayList<>();
 
         for (User user : userRepository.findAll()) {
-            if (user.isOwner()) {;
-
-                //TODO add an indicator field in bookingSlot
-                userLoop:
-                for (BookingSlot bookingSlot : bookingSlotRepository.findByOwner(user)) {
-                    if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE) {
-                        for (Booking booking : bookingRepository.findByBookingSlot(bookingSlot)) {
-                            if (booking.getReservee() == null) {
-
-                                break userLoop;
-                            }
-                        }
-                    }
+            if (user.isOwner()) {
+                boolean hasAvailableSlot = bookingSlotRepository.findByOwner(user).stream()
+                        .anyMatch(slot ->
+                                slot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE
+                                && slot.getSlotType() == BookingSlot.BookingSlotType.OFFICE_HOURS
+                        );
+                if (hasAvailableSlot) {
+                    owners.add(user);
                 }
             }
         }
@@ -51,11 +51,9 @@ public class AccountService {
     public User register(String email, String password) {
         if (!isRegistered(email)) {
             User user = new User(email, password, "", "");
-
             userRepository.save(user);
             return user;
         }
-
         return null;
     }
 
@@ -78,29 +76,9 @@ public class AccountService {
 
     public List<Booking> listBooked(String email) {
         Optional<User> user = userRepository.findById(email);
-
         return user.map(bookingRepository::findByReservee).orElse(null);
     }
 
-    /*
-    Dont need to send email on backend
-    public void message(String senderEmail, String receiverEmail, String message) {
-        User sender = getUser(senderEmail);
-        User receiver = getUser(receiverEmail);
-        if (sender == null || receiver == null) return;
-
-        sendSimpleEmail(mailSender, receiverEmail, sender.getFirstName() + " " + sender.getLastName() + "has sent you a message", message);
-    }
-
-    // TODO move helper functions to somewhere better
-    public static void sendSimpleEmail(JavaMailSender mailSender, String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
-    }
-    */
     private boolean isRegistered(String email) {
         return userRepository.findById(email).isPresent();
     }

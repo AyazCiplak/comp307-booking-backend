@@ -11,17 +11,17 @@ import comp307.backend.account.Object.User;
 
 @Entity
 @Table(name = "Requests")
-public class Request {
+public class Request implements BookingsInterface {
     @GeneratedValue
     @Id
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "requesterEmail", nullable = false)
+    @JoinColumn(name = "requester", nullable = false)
     private User requester;
 
     @ManyToOne
-    @JoinColumn(name = "ownerEmail", nullable = false)
+    @JoinColumn(name = "owner", nullable = false)
     private User owner;
 
     @Column(nullable = false)

@@ -1,6 +1,7 @@
 //Programmed by Mao Yurun
 package comp307.backend.account.Object;
 
+import comp307.backend.account.auth.AuthHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,7 +19,6 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-    // TODO needs to be hashed
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
@@ -29,18 +29,23 @@ public class User {
     private String title;
     @Column(nullable = false)
     private Timestamp createdAt;
-    //empty constructor for JPA
+    
+    @Column(unique = true)
+    private String accessToken;
+
     protected User() {}
-    public User(String email, String password, String department, String title) {
+
+    public User(String email, String password, String department, String title, String accessToken) {
         String nameSection = email.split("@")[0];
 
         this.firstName = nameSection.split("\\.")[0];
         this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
         this.email = email;
-        this.password = password;
+        this.password = AuthHelper.hashSHA256(password); // does not store the raw password at all
         this.department = department;
         this.title = title;
         this.createdAt = Timestamp.from(Instant.now());
+        this.accessToken = accessToken;
 
         isOwner = email.endsWith("@mcgill.ca");
     }
@@ -53,12 +58,9 @@ public class User {
         return lastName;
     }
 
-    // TODO should be private security wise, narrow down API for access
     public String getEmail() {
         return email;
     }
-
-    // TODO should be private security wise, narrow down API for access
     public String getPassword() {
         return password;
     }
@@ -74,6 +76,15 @@ public class User {
     }
     public Timestamp getCreatedAt() {
         return createdAt;
+    }
+    public String getAccessToken() {
+        return accessToken;
+    }
+    public void updateToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+    public void logout() {
+        this.accessToken = "";
     }
     @Override
     public boolean equals(Object newUser) {

@@ -14,5 +14,4 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookingSlot(BookingSlot bookingSlot);
     List<Booking> findByReservee(User reservee);
-    //add whatever is needed
 }

@@ -60,8 +60,8 @@ public class RequestService {
 
         if (accept) {
             request.setStatus(true);
+            requestRepository.save(request);
         } else {
-            request.setStatus(false);
             requestRepository.delete(request);
         }
     }

@@ -38,8 +38,8 @@ public class RequestController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getAllPendingRequests")
-    public ResponseEntity<List<Request>> getAllPendingRequests(@PathVariable String ownerToken) {
+    @PostMapping("/getAllPendingRequests")
+    public ResponseEntity<List<Request>> getAllPendingRequests(@RequestBody String ownerToken) {
         return ResponseEntity.ok(requestService.getPendingRequests(ownerToken));
     }
 

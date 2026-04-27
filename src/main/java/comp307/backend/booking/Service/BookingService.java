@@ -65,11 +65,16 @@ public class BookingService {
     //Type 2
     //Already enforced on front end that there can't be overlapping groups or end date earlier than start date etc.
     public BookingSlot createGroupMeetingBookingProposalSlot(Long groupMeetingInstanceID, String ownerToken, String title, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.authService.authenticate(ownerToken);
+
         GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new NoSuchElementException("Group meeting instance " + groupMeetingInstanceID + " not found."));
+
+        if (!groupMeetingInstance.getOwner().getAccessToken().equals(ownerToken)) {
+            throw new BadRequestException("You are a valid owner, but you do not own this group meeting instance.");
+        }
 
         BookingSlot bookingSlot = new BookingSlot(groupMeetingInstance.getOwner(), title, startDateTime, endDateTime, groupMeetingInstance);
         return bookingSlotRepository.save(bookingSlot);
-
     }
 
     //Type 2
@@ -126,7 +131,7 @@ public class BookingService {
             throw new BadRequestException(owner.getFirstName() + " " + owner.getLastName() + " is not an owner");
         }
 
-        return getAllOwnedSlots(owner.getAccessToken()).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
+        return bookingSlotRepository.findByOwner(owner).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
     }
 
 

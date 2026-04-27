@@ -84,7 +84,7 @@ public class User {
         this.accessToken = accessToken;
     }
     public void logout() {
-        this.accessToken = "";
+        this.accessToken = null;
     }
     @Override
     public boolean equals(Object newUser) {

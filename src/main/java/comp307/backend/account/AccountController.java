@@ -38,13 +38,7 @@ public class AccountController {
         }
 
         User newUser = accountService.register(email, combo.getPassword());
-
-        if (newUser != null) {
-            return ResponseEntity.ok(new UserResponse(newUser));
-        }
-        else {
-            return ResponseEntity.badRequest().body("An account with this email already exists.");
-        }
+        return ResponseEntity.ok(new UserResponse(newUser));
     }
 
     /**
@@ -54,13 +48,7 @@ public class AccountController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest combo) {
         User user = accountService.login(combo.getEmail(), combo.getPassword());
-
-        if (user != null) {
-            return ResponseEntity.ok(new UserResponse(user));
-        } 
-        else {
-            return ResponseEntity.badRequest().body("Invalid email or password.");
-        }
+        return ResponseEntity.ok(new UserResponse(user));
     }
 
     @PostMapping("/logout")

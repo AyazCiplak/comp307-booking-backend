@@ -51,19 +51,19 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getAllGroupMeetingProposalsForMeetingInstanceID/{groupMeetingInstanceID}")
+    @PostMapping("/getAllGroupMeetingProposalsForMeetingInstanceID/{groupMeetingInstanceID}")
     public ResponseEntity<List<BookingSlot>> getAllGroupMeetingProposalsForMeetingInstanceID(@PathVariable Long groupMeetingInstanceID, @RequestBody String token) {
         return ResponseEntity.ok(bookingService.getAllGroupMeetingProposalsForMeetingInstanceID(groupMeetingInstanceID, token));
     }
 
-    @GetMapping("/owner/getAllAvailableOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestParam EmailTokenRequest request) {
+    @PostMapping("/owner/getAllAvailableOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody EmailTokenRequest request) {
         return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(request.getEmail(), request.getToken()));
     }
     
-    @GetMapping("/owner/getAllOwnedSlots")
-    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestParam String targetEmail) {
-        return ResponseEntity.ok(bookingService.getAllOwnedSlots(targetEmail));
+    @PostMapping("/owner/getAllOwnedSlots")
+    public ResponseEntity<List<BookingSlot>> getAllOwnedSlots(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getAllOwnedSlots(ownerToken));
     }
 
     @PostMapping("/book")
@@ -82,7 +82,7 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
     
-    // TODO handleDelete (or just use the cancel endpoint?)
+
 
     @ExceptionHandler(value = NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

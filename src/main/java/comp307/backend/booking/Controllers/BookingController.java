@@ -43,6 +43,12 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/selectGroupMeetingProposalSlot/{bookingSlotId}")
+    public ResponseEntity<Void> selectGroupMeetingProposalSlot(@PathVariable Long bookingSlotId) {
+        bookingService.selectGroupMeetingProposalSlot(bookingSlotId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/owner/getAllAvailableOwnedSlots")
     public ResponseEntity<List<BookingSlot>> getAllAvailableOwnedSlots(@RequestBody String targetEmail) {
         return ResponseEntity.ok(bookingService.getAllAvailableOwnedSlots(targetEmail));

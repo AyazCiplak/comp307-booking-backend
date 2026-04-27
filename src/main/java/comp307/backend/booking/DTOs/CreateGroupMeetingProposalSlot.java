@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class CreateGroupMeetingProposalSlot {
     private Long groupMeetingInstanceID;
+    private String ownerToken;
     private String title;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -14,6 +15,9 @@ public class CreateGroupMeetingProposalSlot {
         return this.groupMeetingInstanceID;
     }
 
+    public String getOwnerToken() {
+        return ownerToken;
+    }
     public String getTitle() {
         return this.title;
     }

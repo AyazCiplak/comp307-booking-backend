@@ -13,6 +13,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
     public User findByToken(String accessToken) {
         Optional<User> queryResult = userRepository.findByaccessToken(accessToken);
 
+        // Authentication
         if (queryResult.isEmpty()) {
             throw new AuthFailureException();
         }

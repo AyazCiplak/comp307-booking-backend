@@ -35,13 +35,13 @@ public class AccountService {
         this.requestRepository = requestRepository;
     }
 
-    public User register(String email, String password) {
+    public User register(String email, String password, String department, String title) {
         // email has not been used
         if (isRegistered(email)) {
             throw new BadRequestException(email + " has already been registered");
         }
 
-        User user = new User(email, password, "", "", generateToken());
+        User user = new User(email, password, department, title, generateToken());
         userRepository.save(user);
 
         return user;

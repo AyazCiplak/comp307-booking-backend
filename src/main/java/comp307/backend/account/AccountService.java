@@ -2,6 +2,7 @@
 package comp307.backend.account;
 
 import comp307.backend.Exceptions.BadRequestException;
+import comp307.backend.Exceptions.NotFoundException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthHelper;
@@ -34,13 +35,13 @@ public class AccountService {
         this.requestRepository = requestRepository;
     }
 
-    public User register(String email, String password) {
+    public User register(String email, String password, String department, String title) {
         // email has not been used
         if (isRegistered(email)) {
             throw new BadRequestException(email + " has already been registered");
         }
 
-        User user = new User(email, password, "", "", generateToken());
+        User user = new User(email, password, department, title, generateToken());
         userRepository.save(user);
 
         return user;
@@ -49,7 +50,7 @@ public class AccountService {
     public User login(String email, String password) {
         // user is registered
         if (!isRegistered(email)) {
-            throw new BadRequestException("Account Not Found");
+            throw new NotFoundException("No account found for email: " + email);
         }
 
         User user = userRepository.findById(email).get();

@@ -2,6 +2,7 @@
 package comp307.backend.account;
 
 import comp307.backend.account.Object.DataTransferObject.LoginRequest;
+import comp307.backend.account.Object.DataTransferObject.RegisterRequest;
 import comp307.backend.account.Object.DataTransferObject.UserInformation;
 import comp307.backend.account.Object.DataTransferObject.LoggedInResponse;
 import comp307.backend.account.Object.User;
@@ -29,7 +30,7 @@ public class AccountController {
      * Returns a safe LoggedInResponse (no password field).
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody LoginRequest combo) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest combo) {
         String email = combo.getEmail();
 
         // Enforce McGill-only registration
@@ -38,7 +39,7 @@ public class AccountController {
                     .body("Only McGill email addresses (@mcgill.ca or @mail.mcgill.ca) may register.");
         }
 
-        User newUser = accountService.register(email, combo.getPassword());
+        User newUser = accountService.register(email, combo.getPassword(), combo.getDepartment(), combo.getTitle());
         return ResponseEntity.ok(new LoggedInResponse(newUser));
     }
 

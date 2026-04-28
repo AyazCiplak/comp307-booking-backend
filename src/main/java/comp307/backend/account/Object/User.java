@@ -1,6 +1,7 @@
 //Programmed by Mao Yurun
 package comp307.backend.account.Object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import comp307.backend.account.auth.AuthHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -76,6 +77,7 @@ public class User {
     public String getEmail() {
         return email;
     }
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -92,6 +94,7 @@ public class User {
     public Timestamp getCreatedAt() {
         return createdAt;
     }
+    @JsonIgnore
     public String getAccessToken() {
         return accessToken;
     }

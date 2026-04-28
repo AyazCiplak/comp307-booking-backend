@@ -68,12 +68,12 @@ public class BookingController {
 
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
-        return ResponseEntity.ok(bookingService.book(request.getSlotId(), request.getReserveeToken()));
+        return ResponseEntity.ok(bookingService.book(request.getBookingSlotID(), request.getReserveeToken()));
     }
 
     @PostMapping("/markAvailabilityForProposal")
     public ResponseEntity<Booking> markAvailabilityForProposal(@RequestBody CreateBookingRequest request) {
-        return ResponseEntity.ok(bookingService.markAvailabilityForProposal(request.getSlotId(), request.getReserveeToken()));
+        return ResponseEntity.ok(bookingService.markAvailabilityForProposal(request.getBookingSlotID(), request.getReserveeToken()));
     }
 
     @DeleteMapping("/{bookingId}")

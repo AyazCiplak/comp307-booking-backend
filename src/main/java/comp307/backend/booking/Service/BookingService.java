@@ -180,6 +180,15 @@ public class BookingService {
             throw new BadRequestException("You should not be booking your own slot");
         }
 
+        // Prevent duplicate bookings: the @UniqueConstraint on (bookingSlotID, reserveeEmail)
+        // would otherwise throw a DataIntegrityViolationException 500
+        boolean alreadyBooked = bookingRepository.findByBookingSlot(bookingSlot)
+                .stream()
+                .anyMatch(b -> b.getReservee().equals(reservee));
+        if (alreadyBooked) {
+            throw new BadRequestException("You have already booked slot " + bookingSlotId + ".");
+        }
+
         //can never be full so still available.
         return bookingRepository.save(new Booking(bookingSlot, reservee));
 

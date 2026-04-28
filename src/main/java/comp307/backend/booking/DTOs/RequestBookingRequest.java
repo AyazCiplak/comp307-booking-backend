@@ -40,4 +40,9 @@ public class RequestBookingRequest {
         return message;
     }
 
+    public void setRequesterToken(String requesterToken) { this.requesterToken = requesterToken; }
+    public void setOwnerEmail(String ownerEmail) { this.ownerEmail = ownerEmail; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
+    public void setMessage(String message) { this.message = message; }
 }

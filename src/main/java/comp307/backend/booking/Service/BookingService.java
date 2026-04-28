@@ -145,7 +145,6 @@ public class BookingService {
         return bookingSlotRepository.findByGroupMeetingInstanceAndSlotType(groupMeetingInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
     }
 
-    //maybe add email service, or frontend could default open email with all the people whose bookings got cancelled in which case can return list of emails that should be notified
     @Transactional
     public void cancelBookingSlot(String ownerToken, Long bookingSlotId) {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new NoSuchElementException("Slot " + bookingSlotId + " not found."));
@@ -195,6 +194,7 @@ public class BookingService {
         return bookingRepository.save(new Booking(bookingSlot, reservee));
 
     }
+    
     //Type 2
     //Might need another function/modify this one to add the ability to join the Selected group meeting proposal that they haven't accepted yet.
     public Booking markAvailabilityForProposal(Long bookingSlotId, String reserveeToken) {

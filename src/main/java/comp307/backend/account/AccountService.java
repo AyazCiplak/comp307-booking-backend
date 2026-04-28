@@ -142,10 +142,14 @@ public class AccountService {
         SecureRandom random = new SecureRandom();
 
         // no duplicates
-        while (sb.isEmpty() || userRepository.findByAccessToken(sb.toString()).isPresent()) {
+        while (sb.isEmpty()) {
             for (int i = 0; i < 20; i++) {
                 int index = random.nextInt(characters.length());
                 sb.append(characters.charAt(index));
+            }
+
+            if (userRepository.findByAccessToken(sb.toString()).isPresent()) {
+                sb = new StringBuilder();
             }
         }
         return sb.toString();

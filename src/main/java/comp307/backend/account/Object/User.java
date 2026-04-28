@@ -37,17 +37,32 @@ public class User {
 
     public User(String email, String password, String department, String title, String accessToken) {
         String nameSection = email.split("@")[0];
+        String[] parts = nameSection.split("\\.");
 
-        this.firstName = nameSection.split("\\.")[0];
-        this.lastName = nameSection.split("\\.")[nameSection.split("\\.").length-1];
+        // Capitalise and strip trailing digits (e.g. "chris.smith2" -> "Chris", "Smith")
+        this.firstName = capitalize(parts[0]);
+        this.lastName  = capitalize(stripTrailingDigits(parts[parts.length - 1]));
+
         this.email = email;
         this.password = AuthHelper.hashSHA256(password); // does not store the raw password at all
-        this.department = department;
-        this.title = title;
+        this.department = department != null ? department : "";
+        this.title = title != null ? title : "";
         this.createdAt = Timestamp.from(Instant.now());
         this.accessToken = accessToken;
 
         isOwner = email.endsWith("@mcgill.ca");
+    }
+
+    /** Removes any trailing digit characters: "smith8" -> "smith". */
+    private static String stripTrailingDigits(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.replaceAll("\\d+$", "");
+    }
+
+    /** Upper-cases the first character and lower-cases the rest: "CHRIS" -> "Chris". */
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
     }
 
     public String getFirstName() {

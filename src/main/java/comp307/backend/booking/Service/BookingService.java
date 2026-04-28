@@ -15,7 +15,9 @@ import comp307.backend.booking.Repository.*;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 //Service for Booking and BookingSlot (Type 2 and 3 only)
@@ -218,6 +220,27 @@ public class BookingService {
         }
 
         return bookingRepository.save(new Booking(bookingSlot, reservee));
+    }
+
+    /**
+     * Returns a map of bookingSlotID -> booking count for every slot owned by the
+     * authenticated owner. Used by the dashboard to populate the "X registered" badge
+     * on each office-hour slot card.
+     */
+    public Map<Long, Long> getSlotBookingCounts(String ownerToken) {
+        User owner = this.authService.authenticate(ownerToken);
+
+        if (!owner.isOwner()) {
+            throw new BadRequestException("You are not an owner");
+        }
+
+        List<BookingSlot> slots = bookingSlotRepository.findByOwner(owner);
+        Map<Long, Long> counts = new HashMap<>();
+        for (BookingSlot slot : slots) {
+            counts.put(slot.getBookingSlotID(),
+                    (long) bookingRepository.findByBookingSlot(slot).size());
+        }
+        return counts;
     }
 
     /** Returns all non-cancelled bookings for the authenticated user. */

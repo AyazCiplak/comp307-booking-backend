@@ -66,6 +66,16 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getAllOwnedSlots(ownerToken));
     }
 
+    /**
+     * POST /api/booking/owner/getSlotBookingCounts
+     * Returns a map of bookingSlotID (as string key) -> booking count for every slot
+     * owned by the authenticated owner. Used by the dashboard to show "X registered".
+     */
+    @PostMapping("/owner/getSlotBookingCounts")
+    public ResponseEntity<java.util.Map<Long, Long>> getSlotBookingCounts(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getSlotBookingCounts(ownerToken));
+    }
+
     @PostMapping("/book")
     public ResponseEntity<Booking> book(@RequestBody CreateBookingRequest request) {
         return ResponseEntity.ok(bookingService.book(request.getBookingSlotID(), request.getReserveeToken()));

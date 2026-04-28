@@ -76,6 +76,16 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.markAvailabilityForProposal(request.getBookingSlotID(), request.getReserveeToken()));
     }
 
+    /**
+     * POST /api/booking/getMyBookings
+     * Returns all non-cancelled bookings (Booking objects with nested BookingSlot) for the
+     * authenticated user. The bookingID is needed by the frontend to call the unbook endpoint.
+     */
+    @PostMapping("/getMyBookings")
+    public ResponseEntity<List<Booking>> getMyBookings(@RequestBody String reserveeToken) {
+        return ResponseEntity.ok(bookingService.getBookingsByReservee(reserveeToken));
+    }
+
     @DeleteMapping("/{bookingId}")
     public ResponseEntity<Void> unbook(@PathVariable Long bookingId, @RequestBody String reserveeToken) {
         bookingService.unbook(bookingId, reserveeToken);

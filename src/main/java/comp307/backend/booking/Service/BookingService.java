@@ -220,6 +220,14 @@ public class BookingService {
         return bookingRepository.save(new Booking(bookingSlot, reservee));
     }
 
+    /** Returns all non-cancelled bookings for the authenticated user. */
+    public List<Booking> getBookingsByReservee(String reserveeToken) {
+        User reservee = this.authService.authenticate(reserveeToken);
+        return bookingRepository.findByReservee(reservee).stream()
+                .filter(b -> b.getBookingSlot().getSlotStatus() != BookingSlot.BookingSlotStatus.CANCELLED)
+                .toList();
+    }
+
     //whether its type 2 or type 3, either way the booking will become available when unbooked because it either had infinite space or now has at least 1 space
     public void unbook(Long bookingId, String reserveeToken) {
         User reservee = this.authService.authenticate(reserveeToken);

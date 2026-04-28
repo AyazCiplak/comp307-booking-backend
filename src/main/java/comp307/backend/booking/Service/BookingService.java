@@ -102,7 +102,13 @@ public class BookingService {
         selectedBookingSlot.markAsSelected();
         bookingSlotRepository.save(selectedBookingSlot);
 
-        List<BookingSlot> otherUnselectedProposals = bookingSlotRepository.findByGroupMeetingInstanceAndType(selectedBookingSlot.getGroupMeetingInstance(), BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+        // Mark the parent instance as finalized so it disappears from "My Pending Group Meetings"
+        // and the invite URL becomes invalid.
+        GroupMeetingInstance parentInstance = selectedBookingSlot.getGroupMeetingInstance();
+        parentInstance.setFinalized(true);
+        groupMeetingInstanceRepository.save(parentInstance);
+
+        List<BookingSlot> otherUnselectedProposals = bookingSlotRepository.findByGroupMeetingInstanceAndType(parentInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
 
         for (BookingSlot otherProposal : otherUnselectedProposals) {
             List<Booking> unusedBookings = bookingRepository.findByBookingSlot(otherProposal);

@@ -2,12 +2,11 @@
 
 package comp307.backend.booking.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import comp307.backend.Exceptions.BadRequestException;
-import comp307.backend.Exceptions.NotFoundException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
@@ -37,7 +36,7 @@ public class GroupMeetingInstanceService {
     }
 
 
-    /** Returns all group meeting instances created by the authenticated owner. */
+    /** Returns all NON-FINALIZED group meeting instances created by the authenticated owner. */
     public List<GroupMeetingInstance> getMyGroupMeetingInstances(String ownerToken) {
         User owner = authService.authenticate(ownerToken);
         if (!owner.isOwner()) {
@@ -50,14 +49,14 @@ public class GroupMeetingInstanceService {
                 .toList();
     }
 
-    //For getting the group meeting instance when a user clicks the invite link
+    /** For getting the group meeting instance when a user clicks the invite link. */
     public GroupMeetingInstance getGroupMeetingInstanceByInviteToken(String inviteToken) {
-        Optional<GroupMeetingInstance> groupMeetingInstance = groupMeetingInstanceRepository.findByInviteToken(inviteToken);
+        List<GroupMeetingInstance> groupMeetingInstances = groupMeetingInstanceRepository.findByInviteToken(inviteToken);
 
-        if (groupMeetingInstance.isEmpty()) {
-            throw new NotFoundException("Group meeting instance with invite token " + inviteToken + " not found.");
+        if (groupMeetingInstances.size() != 1) {
+            throw new BadRequestException("Should be exactly one group meeting instance with invite token " + inviteToken + " but found " + groupMeetingInstances.size());
         }
 
-        return groupMeetingInstance.get();
+        return groupMeetingInstances.get(0);
     }
 }

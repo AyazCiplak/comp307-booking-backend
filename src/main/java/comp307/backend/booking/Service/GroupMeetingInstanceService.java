@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import comp307.backend.Exceptions.BadRequestException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
@@ -23,7 +24,7 @@ public class GroupMeetingInstanceService {
 
 
     public GroupMeetingInstance getGroupMeetingInstanceByID(Long groupMeetingInstanceID) {
-        return groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new RuntimeException("GroupMeetingInstance with id " + groupMeetingInstanceID + " not found."));
+        return groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new BadRequestException("GroupMeetingInstance with id " + groupMeetingInstanceID + " not found."));
     }
 
 
@@ -40,7 +41,7 @@ public class GroupMeetingInstanceService {
         List<GroupMeetingInstance> groupMeetingInstances = groupMeetingInstanceRepository.findByInviteToken(inviteToken);
 
         if (groupMeetingInstances.size() != 1) {
-            throw new RuntimeException("Should be exactly one group meeting instance with invite token " + inviteToken + " but found " + groupMeetingInstances.size());
+            throw new BadRequestException("Should be exactly one group meeting instance with invite token " + inviteToken + " but found " + groupMeetingInstances.size());
         }
 
         return groupMeetingInstances.get(0);

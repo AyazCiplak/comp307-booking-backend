@@ -33,7 +33,7 @@ public class RequestService {
         User owner = userRepository.findById(ownerEmail).orElseThrow(() -> new NoSuchElementException("User " + ownerEmail + " not found"));
 
         if (owner.equals(requester)) {
-            throw new IllegalArgumentException("You should not send a request to yourself");
+            throw new BadRequestException("You should not send a request to yourself");
         }
 
         if (!owner.isOwner()) {

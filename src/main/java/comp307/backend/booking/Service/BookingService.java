@@ -45,7 +45,7 @@ public class BookingService {
         User owner = this.authService.authenticate(ownerToken);
 
         if (startDateTimes.size() != endDateTimes.size()) {
-            throw new IllegalArgumentException("Size of start date times and end date times do not match.");
+            throw new BadRequestException("Size of start date times and end date times do not match.");
         }
 
         if (!owner.isOwner()) {
@@ -86,11 +86,11 @@ public class BookingService {
 
 
         if (selectedBookingSlot.getSlotType() != BookingSlot.BookingSlotType.GROUP_PROPOSAL) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not a group meeting proposal slot.");
+            throw new BadRequestException("Slot " + bookingSlotId + " is not a group meeting proposal slot.");
         }
 
         if (selectedBookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.CANCELLED) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " was cancelled.");
+            throw new BadRequestException("Slot " + bookingSlotId + " was cancelled.");
         }
 
         if (!selectedBookingSlot.getOwner().equals(owner)) {
@@ -169,15 +169,15 @@ public class BookingService {
         BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new NoSuchElementException("Slot " + bookingSlotId + " not found."));
 
         if (!bookingSlot.getSlotStatus().equals(BookingSlot.BookingSlotStatus.AVAILABLE)) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not available.");
+            throw new BadRequestException("Slot " + bookingSlotId + " is not available.");
         }
 
         if (bookingSlot.getSlotType() != BookingSlot.BookingSlotType.OFFICE_HOURS) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not an office hours slot.");
+            throw new BadRequestException("Slot " + bookingSlotId + " is not an office hours slot.");
         }
 
         if (bookingSlot.getOwner().equals(reservee)) {
-            throw new IllegalArgumentException("You should not be booking your own slot");
+            throw new BadRequestException("You should not be booking your own slot");
         }
 
         //can never be full so still available.
@@ -188,18 +188,18 @@ public class BookingService {
     //Might need another function/modify this one to add the ability to join the Selected group meeting proposal that they haven't accepted yet.
     public Booking markAvailabilityForProposal(Long bookingSlotId, String reserveeToken) {
         User reservee = this.authService.authenticate(reserveeToken);
-        BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new RuntimeException("Slot " + bookingSlotId + " not found."));
+        BookingSlot bookingSlot = bookingSlotRepository.findById(bookingSlotId).orElseThrow(() -> new BadRequestException("Slot " + bookingSlotId + " not found."));
 
         if (bookingSlot.getSlotType() != BookingSlot.BookingSlotType.GROUP_PROPOSAL) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not a pending proposal slot.");
+            throw new BadRequestException("Slot " + bookingSlotId + " is not a pending proposal slot.");
         }
 
         if (bookingSlot.getSlotStatus() != BookingSlot.BookingSlotStatus.AVAILABLE) {
-            throw new IllegalArgumentException("Slot " + bookingSlotId + " is not available for marking availability.");
+            throw new BadRequestException("Slot " + bookingSlotId + " is not available for marking availability.");
         }
 
         if (bookingSlot.getOwner().equals(reservee)) {
-            throw new IllegalArgumentException("You should not be booking your own slot");
+            throw new BadRequestException("You should not be booking your own slot");
         }
 
         int currentBookingsCount = bookingRepository.findByBookingSlot(bookingSlot).size();
@@ -219,7 +219,7 @@ public class BookingService {
 
         // No self check as it would't exist in the first place
         if (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.CANCELLED) {
-            throw new IllegalArgumentException("Slot " + bookingSlot.getBookingSlotID() + " is cancelled, should not be calling this function.");
+            throw new BadRequestException("Slot " + bookingSlot.getBookingSlotID() + " is cancelled, should not be calling this function.");
         }
 
         if (!booking.getReservee().equals(reservee)) {

@@ -32,7 +32,7 @@ public class GroupMeetingInstanceController {
 
     @PostMapping("/create")
     public ResponseEntity<GroupMeetingInstance> createGroupMeetingInstance(@RequestBody CreateGroupMeetingInstance request) {
-        GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerEmail(), request.getName(), request.getMaxUsers(), request.getInviteToken());
+        GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerToken(), request.getName(), request.getMaxUsers(), request.getInviteToken());
         return ResponseEntity.ok(groupMeetingInstance);
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import comp307.backend.account.Object.User;
-import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
 import comp307.backend.booking.Repository.GroupMeetingInstanceRepository;
@@ -16,12 +15,10 @@ import comp307.backend.booking.Repository.GroupMeetingInstanceRepository;
 public class GroupMeetingInstanceService {
     private final AuthService authService;
     private final GroupMeetingInstanceRepository groupMeetingInstanceRepository;
-    private final UserRepository userRepository;
 
-    public GroupMeetingInstanceService(AuthService authService, GroupMeetingInstanceRepository groupMeetingInstanceRepository, UserRepository userRepository) {
+    public GroupMeetingInstanceService(AuthService authService, GroupMeetingInstanceRepository groupMeetingInstanceRepository) {
         this.authService = authService;
         this.groupMeetingInstanceRepository = groupMeetingInstanceRepository;
-        this.userRepository = userRepository;
     }
 
 

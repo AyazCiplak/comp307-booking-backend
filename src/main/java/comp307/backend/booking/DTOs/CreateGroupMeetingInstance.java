@@ -3,13 +3,13 @@
 package comp307.backend.booking.DTOs;
 
 public class CreateGroupMeetingInstance {
-    private String ownerEmail;
+    private String ownerToken;
     private String name;
     private int maxUsers;
     private String inviteToken;
 
-    public String getOwnerEmail() {
-        return this.ownerEmail;
+    public String getOwnerToken() {
+        return this.ownerToken;
     }
 
     public String getName() {

@@ -60,8 +60,21 @@ public class AccountController {
     }
 
     /**
-     * Returns all @mcgill.ca owners who have at least one available office-hours slot.
-     * Safe UserInformation list (no passwords or access tokens).
+     * Returns ALL registered @mcgill.ca owner accounts (no slot-availability filter).
+     * Used by the Browse Owners page so students can also request personal meetings
+     * with owners who haven't e.g. posted any office-hours slots yet.
+     */
+    @PostMapping("/getAllOwners")
+    public ResponseEntity<List<UserInformation>> getAllOwners(@RequestBody String token) {
+        List<UserInformation> owners = accountService.getAllOwners(token).stream()
+                .map(UserInformation::new)
+                .toList();
+        return ResponseEntity.ok(owners);
+    }
+
+    /**
+     * Returns only @mcgill.ca owners who have at least one available office-hours slot.
+     * Kept for any future filtered-list use-case.
      */
     @PostMapping("/getFreeSlotOwners")
     public ResponseEntity<List<UserInformation>> getFreeSlotOwners(@RequestBody String token) {

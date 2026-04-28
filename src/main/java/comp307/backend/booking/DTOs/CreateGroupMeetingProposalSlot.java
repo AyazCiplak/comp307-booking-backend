@@ -11,22 +11,18 @@ public class CreateGroupMeetingProposalSlot {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
-    public Long getGroupMeetingInstanceID() {
-        return this.groupMeetingInstanceID;
-    }
+    public Long getGroupMeetingInstanceID() { return this.groupMeetingInstanceID; }
+    public void setGroupMeetingInstanceID(Long groupMeetingInstanceID) { this.groupMeetingInstanceID = groupMeetingInstanceID; }
 
-    public String getOwnerToken() {
-        return ownerToken;
-    }
-    public String getTitle() {
-        return this.title;
-    }
+    public String getOwnerToken() { return ownerToken; }
+    public void setOwnerToken(String ownerToken) { this.ownerToken = ownerToken; }
 
-    public LocalDateTime getStartDateTime() {
-        return this.startDateTime;
-    }
+    public String getTitle() { return this.title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public LocalDateTime getEndDateTime() {
-        return this.endDateTime;
-    }
+    public LocalDateTime getStartDateTime() { return this.startDateTime; }
+    public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
+
+    public LocalDateTime getEndDateTime() { return this.endDateTime; }
+    public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
 }

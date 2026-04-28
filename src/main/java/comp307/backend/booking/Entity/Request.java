@@ -92,6 +92,11 @@ public class Request implements BookingsInterface {
         return status == RequestStatus.PENDING;
     }
 
+    /** Exposed so Jackson serialises the full status string ("PENDING" / "ACCEPTED" / "DECLINED"). */
+    public RequestStatus getStatus() {
+        return status;
+    }
+
     public enum RequestStatus {
         PENDING,
         ACCEPTED,

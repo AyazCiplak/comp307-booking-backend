@@ -43,6 +43,29 @@ public class RequestController {
         return ResponseEntity.ok(requestService.getPendingRequests(ownerToken));
     }
 
+    /**
+     * POST /api/requests/getMyRequests
+     * Returns all PENDING requests sent by the authenticated user.
+     * Accepted requests are excluded (they become Bookings visible via getMyBookings).
+     * Body = raw token.
+     */
+    @PostMapping("/getMyRequests")
+    public ResponseEntity<List<Request>> getMyRequests(@RequestBody String requesterToken) {
+        return ResponseEntity.ok(requestService.getMyRequests(requesterToken));
+    }
+
+    /**
+     * DELETE /api/requests/{id}
+     * Allows the original requester to cancel (delete) their own pending request.
+     * Body = raw requester token.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelMyRequest(@PathVariable(name = "id") Long requestId,
+                                                @RequestBody String requesterToken) {
+        requestService.cancelMyRequest(requestId, requesterToken);
+        return ResponseEntity.noContent().build();
+    }
+
     @ExceptionHandler(value = NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {

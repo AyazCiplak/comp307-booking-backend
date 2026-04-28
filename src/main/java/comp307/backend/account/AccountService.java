@@ -2,6 +2,7 @@
 package comp307.backend.account;
 
 import comp307.backend.Exceptions.BadRequestException;
+import comp307.backend.Exceptions.NotFoundException;
 import comp307.backend.account.Object.User;
 import comp307.backend.account.Object.UserRepository;
 import comp307.backend.account.auth.AuthHelper;
@@ -49,7 +50,7 @@ public class AccountService {
     public User login(String email, String password) {
         // user is registered
         if (!isRegistered(email)) {
-            throw new BadRequestException("Account Not Found");
+            throw new NotFoundException("No account found for email: " + email);
         }
 
         User user = userRepository.findById(email).get();

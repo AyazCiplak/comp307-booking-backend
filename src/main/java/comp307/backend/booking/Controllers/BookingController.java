@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 
@@ -72,8 +73,19 @@ public class BookingController {
      * owned by the authenticated owner. Used by the dashboard to show "X registered".
      */
     @PostMapping("/owner/getSlotBookingCounts")
-    public ResponseEntity<java.util.Map<Long, Long>> getSlotBookingCounts(@RequestBody String ownerToken) {
+    public ResponseEntity<Map<Long, Long>> getSlotBookingCounts(@RequestBody String ownerToken) {
         return ResponseEntity.ok(bookingService.getSlotBookingCounts(ownerToken));
+    }
+
+    /**
+     * POST /api/booking/owner/getSlotBookers
+     * Returns a map of bookingSlotID -> Booking for every MEETING-type slot owned by the
+     * authenticated owner.  Used by the dashboard to show the booker's name/email on 1:1 slots.
+     * Body = raw owner token.
+     */
+    @PostMapping("/owner/getSlotBookers")
+    public ResponseEntity<Map<Long, Booking>> getSlotBookers(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getSlotBookers(ownerToken));
     }
 
     @PostMapping("/book")

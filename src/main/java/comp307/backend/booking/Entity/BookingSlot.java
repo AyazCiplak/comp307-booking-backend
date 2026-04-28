@@ -57,6 +57,15 @@ public class BookingSlot implements BookingsInterface {
         this.endDateTime = endDateTime;
     }
 
+    //Type 1 (1:1 meeting) constructor
+    public BookingSlot(User owner, String title, LocalDateTime startDateTime, LocalDateTime endDateTime, BookingSlotType type) {
+        this.owner = owner;
+        this.type = type;
+        this.title = title;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
+
     //Type 2 proposal constructor
     public BookingSlot(User owner, String title, LocalDateTime startDateTime, LocalDateTime endDateTime, GroupMeetingInstance groupMeetingInstance) {
         this.owner = owner;
@@ -136,7 +145,8 @@ public class BookingSlot implements BookingsInterface {
     public enum BookingSlotType {
         GROUP_PROPOSAL,
         GROUP_SELECTED,
-        OFFICE_HOURS
+        OFFICE_HOURS,
+        MEETING  // Type 1: 1:1 personal meeting created when an owner accepts a Request
     }
 
     public enum BookingSlotStatus {

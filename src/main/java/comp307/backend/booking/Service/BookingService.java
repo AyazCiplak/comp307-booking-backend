@@ -251,6 +251,31 @@ public class BookingService {
                 .toList();
     }
 
+    /**
+     * Returns a map of bookingSlotID -> Booking for every MEETING-type slot owned by the
+     * authenticated owner.  Used by the dashboard to display who booked each 1:1 meeting.
+     * Slots with no booking yet (edge case) are omitted from the map.
+     */
+    public Map<Long, Booking> getSlotBookers(String ownerToken) {
+        User owner = this.authService.authenticate(ownerToken);
+        if (!owner.isOwner()) {
+            throw new BadRequestException("You are not an owner");
+        }
+
+        List<BookingSlot> meetingSlots = bookingSlotRepository.findByOwner(owner).stream()
+                .filter(s -> s.getSlotType() == BookingSlot.BookingSlotType.MEETING)
+                .toList();
+
+        Map<Long, Booking> result = new HashMap<>();
+        for (BookingSlot slot : meetingSlots) {
+            List<Booking> bookings = bookingRepository.findByBookingSlot(slot);
+            if (!bookings.isEmpty()) {
+                result.put(slot.getBookingSlotID(), bookings.get(0));
+            }
+        }
+        return result;
+    }
+
     //whether its type 2 or type 3, either way the booking will become available when unbooked because it either had infinite space or now has at least 1 space
     public void unbook(Long bookingId, String reserveeToken) {
         User reservee = this.authService.authenticate(reserveeToken);

@@ -36,3 +36,6 @@ build/
 ### Postman ### 
 postman/
 .postman/
+
+### application-local properties (used for testing) ### 
+src/main/resources/application-local.properties

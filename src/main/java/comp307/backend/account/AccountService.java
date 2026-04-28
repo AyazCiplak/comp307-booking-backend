@@ -59,6 +59,7 @@ public class AccountService {
         if (user.getPassword().equals(AuthHelper.hashSHA256(password))) {
             // updates token on login to prevent old sessions being able to access
             user.updateToken(generateToken());
+            userRepository.save(user); // persist the new token — without this the update is lost
             return user;
         }
 
@@ -66,8 +67,25 @@ public class AccountService {
     }
 
     /**
-     * Returns all @mcgill.ca owners who have at least one AVAILABLE OFFICE_HOURS slot.
-     * Previously this always returned an empty list because owners.add(user) was never reached.
+     * Returns ALL registered @mcgill.ca owner accounts, regardless of whether they have
+     * any available booking slots. Used by the Browse Owners page so students can also
+     * send personal meeting requests to owners who haven't posted office hours yet.
+     */
+    public ArrayList<User> getAllOwners(String token) {
+        this.authService.authenticate(token);
+
+        ArrayList<User> owners = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            if (user.isOwner()) {
+                owners.add(user);
+            }
+        }
+        return owners;
+    }
+
+    /**
+     * Returns @mcgill.ca owners who have at least one AVAILABLE OFFICE_HOURS slot.
+     * Kept for any future filtering use-case (e.g. "only show owners with open slots").
      */
     public ArrayList<User> getFreeSlotOwners(String token) {
         this.authService.authenticate(token);

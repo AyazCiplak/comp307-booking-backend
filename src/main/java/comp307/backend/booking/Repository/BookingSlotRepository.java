@@ -14,5 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookingSlotRepository extends JpaRepository<BookingSlot, Long> {
     List<BookingSlot> findByOwner(User owner);
-    List<BookingSlot> findByGroupMeetingInstanceAndSlotType(GroupMeetingInstance groupMeetingInstance, BookingSlot.BookingSlotType bookingSlotType);
+    // Field is named "type" in the entity (getter is getSlotType), so Spring Data must use "Type" here
+    List<BookingSlot> findByGroupMeetingInstanceAndType(GroupMeetingInstance groupMeetingInstance, BookingSlot.BookingSlotType type);
 }

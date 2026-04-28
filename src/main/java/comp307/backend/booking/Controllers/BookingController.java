@@ -1,4 +1,4 @@
-//Programmed by Henry Niedermayer and Mao Yurun
+//Programmed by Henry Niedermayer, Mao Yurun and Ayaz Ciplak
 
 package comp307.backend.booking.Controllers;
 
@@ -86,6 +86,30 @@ public class BookingController {
     @PostMapping("/owner/getSlotBookers")
     public ResponseEntity<Map<Long, Booking>> getSlotBookers(@RequestBody String ownerToken) {
         return ResponseEntity.ok(bookingService.getSlotBookers(ownerToken));
+    }
+
+    /**
+     * POST /api/booking/getGroupProposalCounts/{groupMeetingInstanceID}
+     * Returns a map of bookingSlotID -> availability count for every GROUP_PROPOSAL slot.
+     * Any authenticated user can call this (no ownership check). Body = raw token.
+     */
+    @PostMapping("/getGroupProposalCounts/{groupMeetingInstanceID}")
+    public ResponseEntity<Map<Long, Long>> getGroupProposalCounts(
+            @PathVariable Long groupMeetingInstanceID,
+            @RequestBody String token) {
+        return ResponseEntity.ok(bookingService.getGroupProposalCounts(groupMeetingInstanceID, token));
+    }
+
+    /**
+     * POST /api/booking/getAllProposalBookers/{groupMeetingInstanceID}
+     * Returns a map of bookingSlotID -> List<Booking> for every GROUP_PROPOSAL slot
+     * in the given group meeting instance. Body = raw owner token.
+     */
+    @PostMapping("/getAllProposalBookers/{groupMeetingInstanceID}")
+    public ResponseEntity<Map<Long, List<Booking>>> getAllProposalBookers(
+            @PathVariable Long groupMeetingInstanceID,
+            @RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getAllProposalBookers(groupMeetingInstanceID, ownerToken));
     }
 
     @PostMapping("/book")

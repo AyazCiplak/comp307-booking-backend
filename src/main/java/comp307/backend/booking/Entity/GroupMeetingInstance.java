@@ -28,6 +28,10 @@ public class GroupMeetingInstance {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    /** True once the owner has selected a final proposal slot via selectGroupMeetingProposalSlot. */
+    @Column(nullable = false)
+    private boolean finalized = false;
+
     //for JPA
     protected GroupMeetingInstance() {}
 
@@ -61,5 +65,13 @@ public class GroupMeetingInstance {
 
     public LocalDateTime getCreatedAt() {
         return this.createdAt;
+    }
+
+    public boolean isFinalized() {
+        return this.finalized;
+    }
+
+    public void setFinalized(boolean finalized) {
+        this.finalized = finalized;
     }
 }

@@ -37,6 +37,19 @@ public class GroupMeetingInstanceService {
     }
 
 
+    /** Returns all group meeting instances created by the authenticated owner. */
+    public List<GroupMeetingInstance> getMyGroupMeetingInstances(String ownerToken) {
+        User owner = authService.authenticate(ownerToken);
+        if (!owner.isOwner()) {
+            throw new BadRequestException("You are not an owner");
+        }
+        // Only return instances that have NOT yet been finalized (i.e., still pending).
+        // Finalized instances (where the owner selected a time) appear in "My Booking Slots" instead.
+        return groupMeetingInstanceRepository.findByOwner(owner).stream()
+                .filter(gm -> !gm.isFinalized())
+                .toList();
+    }
+
     //For getting the group meeting instance when a user clicks the invite link
     public GroupMeetingInstance getGroupMeetingInstanceByInviteToken(String inviteToken) {
         Optional<GroupMeetingInstance> groupMeetingInstance = groupMeetingInstanceRepository.findByInviteToken(inviteToken);

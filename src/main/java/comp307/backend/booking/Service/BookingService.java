@@ -102,7 +102,13 @@ public class BookingService {
         selectedBookingSlot.markAsSelected();
         bookingSlotRepository.save(selectedBookingSlot);
 
-        List<BookingSlot> otherUnselectedProposals = bookingSlotRepository.findByGroupMeetingInstanceAndSlotType(selectedBookingSlot.getGroupMeetingInstance(), BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+        // Mark the parent instance as finalized so it disappears from "My Pending Group Meetings"
+        // and the invite URL becomes invalid.
+        GroupMeetingInstance parentInstance = selectedBookingSlot.getGroupMeetingInstance();
+        parentInstance.setFinalized(true);
+        groupMeetingInstanceRepository.save(parentInstance);
+
+        List<BookingSlot> otherUnselectedProposals = bookingSlotRepository.findByGroupMeetingInstanceAndType(parentInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
 
         for (BookingSlot otherProposal : otherUnselectedProposals) {
             List<Booking> unusedBookings = bookingRepository.findByBookingSlot(otherProposal);
@@ -133,7 +139,13 @@ public class BookingService {
             throw new BadRequestException(owner.getFirstName() + " " + owner.getLastName() + " is not an owner");
         }
 
-        return bookingSlotRepository.findByOwner(owner).stream().filter(bookingSlot -> (bookingSlot.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)).toList();
+        // Only expose OFFICE_HOURS and MEETING slots via the public browse API.
+        // GROUP_PROPOSAL and GROUP_SELECTED slots are invite-only (accessible only via the invite URL).
+        return bookingSlotRepository.findByOwner(owner).stream()
+                .filter(s -> s.getSlotStatus() == BookingSlot.BookingSlotStatus.AVAILABLE)
+                .filter(s -> s.getSlotType() == BookingSlot.BookingSlotType.OFFICE_HOURS
+                          || s.getSlotType() == BookingSlot.BookingSlotType.MEETING)
+                .toList();
     }
 
 
@@ -142,7 +154,7 @@ public class BookingService {
 
         GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID).orElseThrow(() -> new NoSuchElementException("Group meeting instance " + groupMeetingInstanceID + " not found."));
 
-        return bookingSlotRepository.findByGroupMeetingInstanceAndSlotType(groupMeetingInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+        return bookingSlotRepository.findByGroupMeetingInstanceAndType(groupMeetingInstance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
     }
 
     @Transactional
@@ -272,6 +284,48 @@ public class BookingService {
             if (!bookings.isEmpty()) {
                 result.put(slot.getBookingSlotID(), bookings.get(0));
             }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a map of bookingSlotID -> booking count for every GROUP_PROPOSAL slot in the
+     * given instance.  Any authenticated user can call this (no ownership check).
+     * Used by GroupBooking.tsx to show the fill bar.
+     */
+    public Map<Long, Long> getGroupProposalCounts(Long groupMeetingInstanceID, String token) {
+        this.authService.authenticate(token);
+        GroupMeetingInstance instance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID)
+                .orElseThrow(() -> new NoSuchElementException("Group meeting instance " + groupMeetingInstanceID + " not found."));
+        List<BookingSlot> slots = bookingSlotRepository.findByGroupMeetingInstanceAndType(
+                instance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+        Map<Long, Long> result = new HashMap<>();
+        for (BookingSlot slot : slots) {
+            result.put(slot.getBookingSlotID(), (long) bookingRepository.findByBookingSlot(slot).size());
+        }
+        return result;
+    }
+
+    /**
+     * Returns a map of bookingSlotID -> List<Booking> for every GROUP_PROPOSAL slot
+     * in the given group meeting instance.  Used by ConfirmGroupTime.tsx to show who
+     * marked themselves available on each proposed time slot.
+     */
+    public Map<Long, List<Booking>> getAllProposalBookers(Long groupMeetingInstanceID, String ownerToken) {
+        User owner = this.authService.authenticate(ownerToken);
+        GroupMeetingInstance instance = groupMeetingInstanceRepository.findById(groupMeetingInstanceID)
+                .orElseThrow(() -> new NoSuchElementException("Group meeting instance " + groupMeetingInstanceID + " not found."));
+
+        if (!instance.getOwner().equals(owner)) {
+            throw new BadRequestException("You are not the owner of this group meeting instance.");
+        }
+
+        List<BookingSlot> proposalSlots = bookingSlotRepository.findByGroupMeetingInstanceAndType(
+                instance, BookingSlot.BookingSlotType.GROUP_PROPOSAL);
+
+        Map<Long, List<Booking>> result = new HashMap<>();
+        for (BookingSlot slot : proposalSlots) {
+            result.put(slot.getBookingSlotID(), bookingRepository.findByBookingSlot(slot));
         }
         return result;
     }

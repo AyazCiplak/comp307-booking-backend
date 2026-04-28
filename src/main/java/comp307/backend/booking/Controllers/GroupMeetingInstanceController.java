@@ -35,4 +35,13 @@ public class GroupMeetingInstanceController {
         GroupMeetingInstance groupMeetingInstance = groupMeetingInstanceService.createGroupMeetingInstance(request.getOwnerToken(), request.getName(), request.getMaxUsers(), request.getInviteToken());
         return ResponseEntity.ok(groupMeetingInstance);
     }
+
+    /**
+     * POST /api/groupMeetingInstances/getMyInstances
+     * Returns all group meeting instances owned by the authenticated owner. Body = raw token.
+     */
+    @PostMapping("/getMyInstances")
+    public ResponseEntity<java.util.List<GroupMeetingInstance>> getMyInstances(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(groupMeetingInstanceService.getMyGroupMeetingInstances(ownerToken));
+    }
 }

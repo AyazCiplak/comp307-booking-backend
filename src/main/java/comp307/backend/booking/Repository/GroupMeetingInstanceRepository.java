@@ -11,4 +11,5 @@ import comp307.backend.booking.Entity.GroupMeetingInstance;
 @Repository
 public interface GroupMeetingInstanceRepository extends JpaRepository<GroupMeetingInstance, Long> {
     List<GroupMeetingInstance> findByInviteToken(String inviteToken);
+    List<GroupMeetingInstance> findByOwner(comp307.backend.account.Object.User owner);
 }

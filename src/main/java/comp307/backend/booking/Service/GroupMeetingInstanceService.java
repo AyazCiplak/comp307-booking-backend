@@ -36,6 +36,15 @@ public class GroupMeetingInstanceService {
     }
 
 
+    /** Returns all group meeting instances created by the authenticated owner. */
+    public List<GroupMeetingInstance> getMyGroupMeetingInstances(String ownerToken) {
+        User owner = authService.authenticate(ownerToken);
+        if (!owner.isOwner()) {
+            throw new BadRequestException("You are not an owner");
+        }
+        return groupMeetingInstanceRepository.findByOwner(owner);
+    }
+
     //For getting the group meeting instance when a user clicks the invite link
     public GroupMeetingInstance getGroupMeetingInstanceByInviteToken(String inviteToken) {
         List<GroupMeetingInstance> groupMeetingInstances = groupMeetingInstanceRepository.findByInviteToken(inviteToken);

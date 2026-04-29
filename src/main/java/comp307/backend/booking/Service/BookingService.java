@@ -265,6 +265,23 @@ public class BookingService {
     }
 
     /**
+     * Returns a map of bookingSlotID -> ALL Booking records for every OFFICE_HOURS slot
+     * owned by the authenticated owner. Used by the dashboard registrant-list modal and
+     * the cancellation mailto notification.
+     */
+    public Map<Long, List<Booking>> getAllOfficeHourSlotBookings(String ownerToken) {
+        User owner = this.authService.authenticate(ownerToken);
+        List<BookingSlot> officeHourSlots = bookingSlotRepository.findByOwner(owner).stream()
+                .filter(s -> s.getSlotType() == BookingSlot.BookingSlotType.OFFICE_HOURS)
+                .toList();
+        Map<Long, List<Booking>> result = new HashMap<>();
+        for (BookingSlot slot : officeHourSlots) {
+            result.put(slot.getBookingSlotID(), bookingRepository.findByBookingSlot(slot));
+        }
+        return result;
+    }
+
+    /**
      * Returns a map of bookingSlotID -> Booking for every MEETING-type slot owned by the
      * authenticated owner.  Used by the dashboard to display who booked each 1:1 meeting.
      * Slots with no booking yet (edge case) are omitted from the map.

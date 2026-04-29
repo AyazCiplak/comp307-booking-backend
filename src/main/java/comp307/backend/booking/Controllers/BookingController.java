@@ -89,6 +89,17 @@ public class BookingController {
     }
 
     /**
+     * POST /api/booking/owner/getAllOfficeHourSlotBookings
+     * Returns a map of bookingSlotID -> List<Booking> for every OFFICE_HOURS slot owned by
+     * the authenticated owner. Used by the dashboard registrant-list modal and cancellation
+     * mailto notification. Body = raw owner token.
+     */
+    @PostMapping("/owner/getAllOfficeHourSlotBookings")
+    public ResponseEntity<Map<Long, List<Booking>>> getAllOfficeHourSlotBookings(@RequestBody String ownerToken) {
+        return ResponseEntity.ok(bookingService.getAllOfficeHourSlotBookings(ownerToken));
+    }
+
+    /**
      * POST /api/booking/getGroupProposalCounts/{groupMeetingInstanceID}
      * Returns a map of bookingSlotID -> availability count for every GROUP_PROPOSAL slot.
      * Any authenticated user can call this (no ownership check). Body = raw token.

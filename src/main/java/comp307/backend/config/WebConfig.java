@@ -20,7 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                         "http://localhost:5173", // Vite dev server (current port for frontend)
-                        "http://localhost:4173" // Vite preview
+                        "http://localhost:4173", // Vite preview,
+                        "comp307-booking-frontend.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

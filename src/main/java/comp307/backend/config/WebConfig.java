@@ -21,7 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:5173", // Vite dev server (current port for frontend)
                         "http://localhost:4173", // Vite preview,
-                        "https://comp307-booking-frontend.vercel.app"
+                        "https://comp307-booking-frontend.vercel.app",
+                        "https://comp307-booking-frontend-1.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

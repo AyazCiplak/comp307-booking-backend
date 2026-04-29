@@ -1,4 +1,4 @@
-//Programmed by Mao Yurun and Henry Niedermayer
+//Programmed by Primarily Mao Yurun and Henry Niedermayer
 package comp307.backend.account;
 
 import comp307.backend.Exceptions.BadRequestException;

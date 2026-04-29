@@ -1,4 +1,4 @@
-//Programmed by Henry Niedermayer and Mao Yurun
+//Programmed by Primarily Henry Niedermayer and Mao Yurun
 
 package comp307.backend.booking.Service;
 

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * Allows the Vite dev-server (localhost:5173) and any deployed frontend origin
  * to call the backend.
  *
- * TODO: tighten allowedOrigins to the specific production URL before final deployment.
+
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:5173", // Vite dev server (current port for frontend)
                         "http://localhost:4173", // Vite preview,
-                        "comp307-booking-frontend.vercel.app"
+                        "https://comp307-booking-frontend.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

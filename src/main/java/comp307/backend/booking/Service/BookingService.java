@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-//Service for Booking and BookingSlot (Type 2 and 3 only)
+//Service for Booking and BookingSlot
 @Service
 public class BookingService {
     private final AuthService authService;

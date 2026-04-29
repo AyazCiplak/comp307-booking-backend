@@ -331,6 +331,7 @@ public class BookingService {
     }
 
     //whether its type 2 or type 3, either way the booking will become available when unbooked because it either had infinite space or now has at least 1 space
+    //If its type 1, it will delete the corresponding slot.
     public void unbook(Long bookingId, String reserveeToken) {
         User reservee = this.authService.authenticate(reserveeToken);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NoSuchElementException("Booking " + bookingId + " not found."));
@@ -343,6 +344,12 @@ public class BookingService {
 
         if (!booking.getReservee().equals(reservee)) {
             throw new BadRequestException("Illegal Access to booking " + bookingId);
+        }
+
+        if (bookingSlot.getTitle().equals("Meeting with " + reservee.getFirstName() + " " + reservee.getLastName()))
+        {
+            bookingSlotRepository.delete(bookingSlot);
+            return;
         }
 
         bookingSlot.setSlotStatus(BookingSlot.BookingSlotStatus.AVAILABLE);

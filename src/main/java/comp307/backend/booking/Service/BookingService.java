@@ -11,6 +11,7 @@ import comp307.backend.account.auth.AuthService;
 import comp307.backend.booking.Entity.Booking;
 import comp307.backend.booking.Entity.BookingSlot;
 import comp307.backend.booking.Entity.GroupMeetingInstance;
+import comp307.backend.booking.Entity.BookingSlot.BookingSlotStatus;
 import comp307.backend.booking.Repository.*;
 import jakarta.transaction.Transactional;
 
@@ -334,6 +335,7 @@ public class BookingService {
     //If its type 1, it will delete the corresponding slot.
     public void unbook(Long bookingId, String reserveeToken) {
         User reservee = this.authService.authenticate(reserveeToken);
+
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NoSuchElementException("Booking " + bookingId + " not found."));
         BookingSlot bookingSlot = booking.getBookingSlot();
 
@@ -346,9 +348,11 @@ public class BookingService {
             throw new BadRequestException("Illegal Access to booking " + bookingId);
         }
 
-        if (bookingSlot.getTitle().equals("Meeting with " + reservee.getFirstName() + " " + reservee.getLastName()))
+        if (bookingSlot.getSlotType() == BookingSlot.BookingSlotType.MEETING)
         {
-            bookingSlotRepository.delete(bookingSlot);
+            bookingSlot.setSlotStatus(BookingSlotStatus.CANCELLED);
+            bookingSlotRepository.save(bookingSlot);
+            bookingRepository.delete(booking);
             return;
         }
 
